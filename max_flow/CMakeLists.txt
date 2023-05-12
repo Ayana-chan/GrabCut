@@ -1,0 +1,1 @@
+add_executable(MaxFlowTest MaxFlowTest.cpp block.h graph.cpp graph.h instances.inc maxflow.cpp)
