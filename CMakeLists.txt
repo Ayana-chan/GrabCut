@@ -8,9 +8,16 @@ set(OpenCV_DIR "D:\\DeveloperTools\\opencv-4.7.0-windows\\opencv\\mingw_build\\i
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+include_directories(./include)
+
 add_subdirectory(./max_flow)
+add_subdirectory(./cut_alg)
 
 add_executable(GrabCut main.cpp)
+target_link_libraries(
+        GrabCut
+        CutAlg
+)
 
 add_executable(OpenCVTest OpenCVTest.cpp)
 target_link_libraries(OpenCVTest ${OpenCV_LIBS})
