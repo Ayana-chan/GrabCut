@@ -2,15 +2,15 @@
 
 #include "src/include/GrabCutter.h"
 
+using namespace std;
+
 int main() {
 //    std::cout << "Hello, World!" << std::endl;
 
     GrabCutter grabCutter;
     grabCutter.start();
 
-    return 0;
-}
+    cout<<"main finish"<<endl;
 
-void tempFun(){
-    std::cout<<"tempFun"<<std::endl;
+    return 0;
 }

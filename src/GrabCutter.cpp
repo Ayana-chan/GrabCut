@@ -9,23 +9,31 @@
 
 using namespace std;
 
+GrabCutter::GrabCutter() {
+    this->uiController = *new UIController();
+}
+
+GrabCutter::~GrabCutter() {
+    delete (&this->uiController);
+}
+
 void GrabCutter::start() {
-    OutputSwitcher outputSwitcher;
-    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
+//    OutputSwitcher outputSwitcher;
+//    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
-    RGB rgb(1,2,3);
-    UIController uiController;
-    int num=uiController.getImagesFromDirectory(R"(D:\Code\C\clionCpp\GrabCut\test_textures)");
-    cout<<"Total "<<num<<" Image"<<endl;
+    uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\lm1.jpeg)");
 
-//    uiController.initInteractivePage();
-
-    auto pixels = UIController::analyseImage(uiController.imageMap["lm1.jpeg"]);
-    cout<<"Image Size: "<<pixels.size()<<"*"<<pixels[0].size()<<endl;
+    auto pixels = uiController.analyseImage();
+    cout << "Image Size: " << pixels.size() << "*" << pixels[0].size() << endl;
 //    for(int i=0;i<pixels.size();i++){
 //        for(int j=0;j<pixels[0].size();j++){
 //            std::cout<<pixels[i][j];
 //        }
 //        std::cout<<std::endl;
 //    }
+
+    uiController.initInteractivePage(uiController.imageName);
+    std::cout << "finish" << std::endl;
 }
+
+

@@ -5,10 +5,18 @@
 #ifndef GRABCUT_GRABCUTTER_H
 #define GRABCUT_GRABCUTTER_H
 
+#include "ui/UIController.h"
 
 class GrabCutter {
 public:
+    GrabCutter();
+
     void start();
+
+    ~GrabCutter();
+
+private:
+    UIController uiController;
 };
 
 

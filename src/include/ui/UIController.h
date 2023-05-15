@@ -14,13 +14,25 @@
 
 class UIController {
 public:
-    std::unordered_map<std::string ,cv::Mat> imageMap;
+    std::string imageName;
+    cv::Mat srcImage;
+    cv::Mat drawnImage;
 
-    static std::vector<std::vector<Pixel>> analyseImage(const cv::Mat &image);
+    std::vector<std::vector<Pixel>> analyseImage();
 
-    int getImagesFromDirectory(const std::string& path);
-    void initInteractivePage();
+    std::string getImagesFromPath(const std::string& path);
+    void initInteractivePage(const std::string& srcImageName);
 
+private:
+    static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标
+
+    //矩形左上角和右下角
+    int posX1;
+    int posY1;
+    int posX2;
+    int posY2;
+    //是否在拖动创建矩形
+    bool isDragging;
 };
 
 
