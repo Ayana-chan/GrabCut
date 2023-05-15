@@ -9,10 +9,6 @@
 
 using namespace std;
 
-GrabCutter::GrabCutter() {
-    this->uiController = UIController();
-}
-
 void GrabCutter::start() {
     //更改cout输出目的地
 //    OutputSwitcher outputSwitcher;
@@ -23,7 +19,7 @@ void GrabCutter::start() {
     std::string imageFileName = "lm1.jpeg";
     this->uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\)" + imageFileName);
 
-    this->imageMat = this->uiController.analyseImage();
+    this->uiController.analyseImage(this->imageMat);
     cout << "Image Size: " << this->imageMat.size() << "*" << this->imageMat[0].size() << endl;
 
     //矩形输入与初始化
@@ -48,5 +44,7 @@ void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
         }
     }
 }
+
+
 
 

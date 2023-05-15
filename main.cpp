@@ -7,10 +7,10 @@ using namespace std;
 int main() {
 //    std::cout << "Hello, World!" << std::endl;
 
-    GrabCutter grabCutter;
-    grabCutter.start();
+    auto grabCutter = make_unique<GrabCutter>();
+    grabCutter->start();
 
-    cout<<"MAIN FINISH"<<endl;
+    cout << "MAIN FINISH" << endl;
 
     return 0;
 }

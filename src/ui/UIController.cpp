@@ -20,19 +20,16 @@ std::string UIController::getImagesFromPath(const std::string &path) {
     return imgName;
 }
 
-std::vector<std::vector<Pixel>> UIController::analyseImage() {
-    std::vector<std::vector<Pixel>> analysedImage;
+void UIController::analyseImage(std::vector<std::vector<Pixel>> &aimVec) {
 
     for (int i = 0; i < this->srcImage.rows; i++) {
-        analysedImage.push_back(*new std::vector<Pixel>());
+        aimVec.emplace_back(std::vector<Pixel>());
         for (int j = 0; j < this->srcImage.cols; j++) {
             RGB rgb(this->srcImage.at<cv::Vec3b>(i, j));
             Pixel pixel(rgb);
-            analysedImage[i].push_back(pixel);
+            aimVec[i].push_back(pixel);
         }
     }
-
-    return analysedImage;//应该会触发返回值优化
 }
 
 void tempFunc(int state, void *pointer) {

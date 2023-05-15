@@ -9,9 +9,11 @@
 
 class GrabCutter {
 public:
-    GrabCutter();
+    GrabCutter()=default;
 
     void start();
+
+    ~GrabCutter()=default;
 
 private:
     UIController uiController;

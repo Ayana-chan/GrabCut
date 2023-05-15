@@ -25,7 +25,11 @@ public:
     int posX2;
     int posY2;
 
-    std::vector<std::vector<Pixel>> analyseImage();
+    /**
+     * 将自己所存储的图片解析成二维Pixel数组
+     * @param aimVec 存储结果值的二维Pixel数组
+     */
+    void analyseImage(std::vector<std::vector<Pixel>> &aimVec);
 
     std::string getImagesFromPath(const std::string& path);
     void drawRect(const std::string& srcImageName);
