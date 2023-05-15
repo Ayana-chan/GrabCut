@@ -15,7 +15,7 @@ std::string UIController::getImagesFromPath(const std::string &path) {
         std::cerr << "WARNING: No Data" << std::endl;
     }
     this->srcImage = img;
-    this->imageName=imgName;
+    this->imageName = imgName;
 
     return imgName;
 }
@@ -60,6 +60,8 @@ void UIController::drawRect(const std::string &srcImageName) {
             break;
         }
     }
+    std::cout << "Rect: From (" << this->posY1 << "," << this->posX1 << ") To (" << this->posY2 << "," << this->posX2
+              << ")" << std::endl;
 }
 
 void UIController::mouseHandler(int event, int x, int y, int, void *srcUIController) {
@@ -68,41 +70,41 @@ void UIController::mouseHandler(int event, int x, int y, int, void *srcUIControl
 
     if (event == cv::EVENT_LBUTTONDOWN && !uiCon->isDragging) {
         //开始拖动
-        std::cout << "Rect: Begin Dragging " << x << " " << y << std::endl;
+//        std::cout << "Rect: Begin Dragging " << x << " " << y << std::endl;
         uiCon->isDragging = true;
         uiCon->posX1 = x;
         uiCon->posY1 = y;
-    }else if(event == cv::EVENT_MOUSEMOVE && uiCon->isDragging){
+    } else if (event == cv::EVENT_MOUSEMOVE && uiCon->isDragging) {
         //正在拖动
-    }else if (event == cv::EVENT_LBUTTONUP && uiCon->isDragging) {
+    } else if (event == cv::EVENT_LBUTTONUP && uiCon->isDragging) {
         //结束拖动
-        std::cout << "Rect: End   Dragging " << x << " " << y << std::endl;
+//        std::cout << "Rect: End   Dragging " << x << " " << y << std::endl;
         uiCon->isDragging = false;
         uiCon->posX2 = x;
         uiCon->posY2 = y;
 
         //将矩形坐标转化为左上角、右下角
-        if(uiCon->posX1>uiCon->posX2){
-            auto temp=uiCon->posX1;
-            uiCon->posX1=uiCon->posX2;
-            uiCon->posX2=temp;
+        if (uiCon->posX1 > uiCon->posX2) {
+            auto temp = uiCon->posX1;
+            uiCon->posX1 = uiCon->posX2;
+            uiCon->posX2 = temp;
         }
-        if(uiCon->posY1>uiCon->posY2){
-            auto temp=uiCon->posY1;
-            uiCon->posY1=uiCon->posY2;
-            uiCon->posY2=temp;
+        if (uiCon->posY1 > uiCon->posY2) {
+            auto temp = uiCon->posY1;
+            uiCon->posY1 = uiCon->posY2;
+            uiCon->posY2 = temp;
         }
 
         //画矩形
         //备份、还原图片
-        uiCon->drawnImage=uiCon->srcImage.clone();
+        uiCon->drawnImage = uiCon->srcImage.clone();
         cv::Rect rect;
         rect.x = uiCon->posX1;
         rect.y = uiCon->posY1;
-        rect.width = uiCon->posX2-uiCon->posX1;
-        rect.height = uiCon->posY2-uiCon->posY1;
+        rect.width = uiCon->posX2 - uiCon->posX1;
+        rect.height = uiCon->posY2 - uiCon->posY1;
         cv::rectangle(uiCon->drawnImage, rect, cv::Scalar(0, 0, 255), 2, 8, 0);
-        cv::imshow(uiCon->imageName,uiCon->drawnImage);
+        cv::imshow(uiCon->imageName, uiCon->drawnImage);
     }
 }
 

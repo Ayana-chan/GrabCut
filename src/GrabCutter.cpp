@@ -18,19 +18,35 @@ void GrabCutter::start() {
 //    OutputSwitcher outputSwitcher;
 //    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
-    std::string imageFileName="lm1.jpeg";
-    uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\)"+imageFileName);
+    //输入图像
 
-    auto pixels = uiController.analyseImage();
-    cout << "Image Size: " << pixels.size() << "*" << pixels[0].size() << endl;
-//    for(int i=0;i<pixels.size();i++){
-//        for(int j=0;j<pixels[0].size();j++){
-//            std::cout<<pixels[i][j];
-//        }
-//        std::cout<<std::endl;
-//    }
+    std::string imageFileName = "lm1.jpeg";
+    this->uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\)" + imageFileName);
 
-    uiController.drawRect(uiController.imageName);
+    this->imageMat = this->uiController.analyseImage();
+    cout << "Image Size: " << this->imageMat.size() << "*" << this->imageMat[0].size() << endl;
+
+    //矩形输入与初始化
+
+    this->uiController.drawRect(this->uiController.imageName);
+    updateMatByRect(this->uiController.posX1, this->uiController.posY1,
+                    this->uiController.posX2, this->uiController.posY2);
+    //TODO 使用kmeans初始化GMM模型
+
+}
+
+void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
+    for (int i = 0; i < this->imageMat.size(); i++) {
+        if(i>minX && i<maxX){
+            continue;
+        }
+        for (int j = 0; j < this->imageMat[0].size(); j++) {
+            if(j>minY && j<maxY){
+                continue;
+            }
+            this->imageMat[i][j].alpha=PixelBelongEnum::B_MUST;
+        }
+    }
 }
 
 

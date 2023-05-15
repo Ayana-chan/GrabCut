@@ -11,7 +11,7 @@
 class Pixel {
 public:
     RGB rgb;
-    PixelBelongEnum alpha; //像素归属
+    PixelBelongEnum alpha; //像素归属，默认为归属前景F_PROB
     unsigned char k; //属于第几个高斯分量。 [1,K]。和alpha一起唯一决定一个高斯分量。
 
     Pixel()=default;

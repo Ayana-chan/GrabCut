@@ -18,6 +18,13 @@ public:
     cv::Mat srcImage;
     cv::Mat drawnImage;
 
+    //矩形的对角坐标
+    //x是横坐标！
+    int posX1;
+    int posY1;
+    int posX2;
+    int posY2;
+
     std::vector<std::vector<Pixel>> analyseImage();
 
     std::string getImagesFromPath(const std::string& path);
@@ -26,12 +33,6 @@ public:
 private:
     static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标
 
-    //矩形的对角坐标
-    //x是横坐标！
-    int posX1;
-    int posY1;
-    int posX2;
-    int posY2;
     //是否在拖动创建矩形
     bool isDragging;
 };

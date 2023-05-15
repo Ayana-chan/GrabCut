@@ -15,6 +15,16 @@ public:
 
 private:
     UIController uiController;
+    std::vector<std::vector<Pixel>> imageMat;
+
+    /**
+     * 把矩形以外的所有点变成B_MUST。注：默认为F_PROB
+     * @param minX
+     * @param minY
+     * @param maxX
+     * @param maxY
+     */
+    void updateMatByRect(int minX,int minY,int maxX,int maxY);
 };
 
 
