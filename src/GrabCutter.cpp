@@ -10,18 +10,16 @@
 using namespace std;
 
 GrabCutter::GrabCutter() {
-    this->uiController = *new UIController();
-}
-
-GrabCutter::~GrabCutter() {
-    delete (&this->uiController);
+    this->uiController = UIController();
 }
 
 void GrabCutter::start() {
+    //更改cout输出目的地
 //    OutputSwitcher outputSwitcher;
 //    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
-    uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\lm1.jpeg)");
+    std::string imageFileName="lm1.jpeg";
+    uiController.getImagesFromPath(R"(D:\Code\C\clionCpp\GrabCut\test_textures\)"+imageFileName);
 
     auto pixels = uiController.analyseImage();
     cout << "Image Size: " << pixels.size() << "*" << pixels[0].size() << endl;

@@ -60,7 +60,6 @@ void UIController::drawRect(const std::string &srcImageName) {
             break;
         }
     }
-
 }
 
 void UIController::mouseHandler(int event, int x, int y, int, void *srcUIController) {
@@ -82,6 +81,18 @@ void UIController::mouseHandler(int event, int x, int y, int, void *srcUIControl
         uiCon->posX2 = x;
         uiCon->posY2 = y;
 
+        //将矩形坐标转化为左上角、右下角
+        if(uiCon->posX1>uiCon->posX2){
+            auto temp=uiCon->posX1;
+            uiCon->posX1=uiCon->posX2;
+            uiCon->posX2=temp;
+        }
+        if(uiCon->posY1>uiCon->posY2){
+            auto temp=uiCon->posY1;
+            uiCon->posY1=uiCon->posY2;
+            uiCon->posY2=temp;
+        }
+
         //画矩形
         //备份、还原图片
         uiCon->drawnImage=uiCon->srcImage.clone();
@@ -90,7 +101,7 @@ void UIController::mouseHandler(int event, int x, int y, int, void *srcUIControl
         rect.y = uiCon->posY1;
         rect.width = uiCon->posX2-uiCon->posX1;
         rect.height = uiCon->posY2-uiCon->posY1;
-        cv::rectangle(uiCon->drawnImage, rect, cv::Scalar(0, 100, 255), 2, 8, 0);
+        cv::rectangle(uiCon->drawnImage, rect, cv::Scalar(0, 0, 255), 2, 8, 0);
         cv::imshow(uiCon->imageName,uiCon->drawnImage);
     }
 }

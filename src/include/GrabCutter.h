@@ -13,8 +13,6 @@ public:
 
     void start();
 
-    ~GrabCutter();
-
 private:
     UIController uiController;
 };

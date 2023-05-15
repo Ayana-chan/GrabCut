@@ -26,7 +26,7 @@ public:
 private:
     static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标
 
-    //矩形左上角和右下角
+    //矩形的对角坐标
     //x是横坐标！
     int posX1;
     int posY1;

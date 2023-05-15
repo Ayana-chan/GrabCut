@@ -10,7 +10,7 @@ int main() {
     GrabCutter grabCutter;
     grabCutter.start();
 
-    cout<<"main finish"<<endl;
+    cout<<"MAIN FINISH"<<endl;
 
     return 0;
 }
