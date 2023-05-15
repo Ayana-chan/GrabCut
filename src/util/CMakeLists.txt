@@ -1,4 +1,5 @@
-add_library(
-        Util
+target_sources(
+        GrabCutter
+        PUBLIC
         OutputSwitcher.cpp
 )

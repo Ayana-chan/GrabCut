@@ -1,5 +1,5 @@
 read new image: lm1.jpeg
 read new image: lm2.jpeg
 read new image: opmiko.jpg
-3
+Total 3 Image
 OutputSwitcher Destructed

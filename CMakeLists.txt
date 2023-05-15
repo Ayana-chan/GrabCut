@@ -3,14 +3,9 @@ project(GrabCut)
 
 set(CMAKE_CXX_STANDARD 17)
 
-#OpenCV
-set(OpenCV_DIR "D:\\DeveloperTools\\opencv-4.7.0-windows\\opencv\\mingw_build\\install")
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
+add_executable(GrabCut main.cpp)
+target_link_libraries(GrabCut GrabCutter)
 add_subdirectory(src)
-
-
 
 
 

@@ -7,7 +7,8 @@
 
 
 class GrabCutter {
-
+public:
+    void start();
 };
 
 

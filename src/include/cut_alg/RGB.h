@@ -5,6 +5,7 @@
 #ifndef GRABCUT_RGB_H
 #define GRABCUT_RGB_H
 
+#include <opencv2/opencv.hpp>
 
 class RGB {
 public:
@@ -12,9 +13,9 @@ public:
     unsigned char g;
     unsigned char b;
 
-    RGB(unsigned char r, unsigned char g, unsigned char b);
-
     RGB()=default;
+    RGB(unsigned char r, unsigned char g, unsigned char b);
+    explicit RGB(cv::Vec3b vec);
 };
 
 
