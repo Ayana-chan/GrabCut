@@ -6,6 +6,6 @@
 
 GMM::GMM(int componentNum) {
     for(int i=0;i<componentNum;i++){
-        this->componentList.push_back(*new GMMComponent);
+        this->componentList.emplace_back(GMMComponent());
     }
 }

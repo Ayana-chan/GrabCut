@@ -31,8 +31,8 @@ std::vector<std::vector<Pixel>> UIController::analyseImage(const cv::Mat &image)
     for (int i = 0; i < image.rows; i++) {
         analysedImage.push_back(*new std::vector<Pixel>());
         for (int j = 0; j < image.cols; j++) {
-            RGB rgb = *new RGB(image.at<cv::Vec3b>(i, j));
-            Pixel pixel = *new Pixel(rgb);
+            RGB rgb(image.at<cv::Vec3b>(i, j));
+            Pixel pixel(rgb);
             analysedImage[i].push_back(pixel);
         }
     }

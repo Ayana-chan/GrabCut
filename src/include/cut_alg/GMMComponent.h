@@ -8,7 +8,8 @@
 #include <vector>
 
 #include "cut_alg/RGB.h"
-#include "cut_alg/GMM.h"
+
+class GMM;
 
 class GMMComponent {
 public:
@@ -18,7 +19,7 @@ public:
 
 private:
     GMM* master; //回指所属的GMM
-    std::vector<RGB> samples; //当前GMM的训练样本
+    std::vector<RGB> samples; //自己的训练样本
 };
 
 

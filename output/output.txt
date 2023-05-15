@@ -2,4 +2,5 @@ read new image: lm1.jpeg
 read new image: lm2.jpeg
 read new image: opmiko.jpg
 Total 3 Image
+Image Size: 535*858
 OutputSwitcher Destructed

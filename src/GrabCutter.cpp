@@ -22,10 +22,10 @@ void GrabCutter::start() {
 
     auto pixels = UIController::analyseImage(uiController.imageMap["lm1.jpeg"]);
     cout<<"Image Size: "<<pixels.size()<<"*"<<pixels[0].size()<<endl;
-    for(int i=0;i<pixels.size();i++){
-        for(int j=0;j<pixels[0].size();j++){
-            std::cout<<pixels[i][j];
-        }
-        std::cout<<std::endl;
-    }
+//    for(int i=0;i<pixels.size();i++){
+//        for(int j=0;j<pixels[0].size();j++){
+//            std::cout<<pixels[i][j];
+//        }
+//        std::cout<<std::endl;
+//    }
 }
