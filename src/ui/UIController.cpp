@@ -39,7 +39,7 @@ void tempFunc(int state, void *pointer) {
     std::cout << "tempFunc" << std::endl;
 }
 
-void UIController::initInteractivePage(const std::string &srcImageName) {
+void UIController::drawRect(const std::string &srcImageName) {
 
     //初始化矩形为整个图像
     this->posX1 = 0;

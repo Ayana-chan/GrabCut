@@ -32,8 +32,7 @@ void GrabCutter::start() {
 //        std::cout<<std::endl;
 //    }
 
-    uiController.initInteractivePage(uiController.imageName);
-    std::cout << "finish" << std::endl;
+    uiController.drawRect(uiController.imageName);
 }
 
 

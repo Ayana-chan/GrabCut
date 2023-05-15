@@ -21,12 +21,13 @@ public:
     std::vector<std::vector<Pixel>> analyseImage();
 
     std::string getImagesFromPath(const std::string& path);
-    void initInteractivePage(const std::string& srcImageName);
+    void drawRect(const std::string& srcImageName);
 
 private:
     static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标
 
     //矩形左上角和右下角
+    //x是横坐标！
     int posX1;
     int posY1;
     int posX2;
