@@ -15,11 +15,14 @@
  */
 class OutputSwitcher {
 public:
+    OutputSwitcher();
+
     void switchOutputToFile(const std::string& path);
 
     ~OutputSwitcher();
 
 private:
+    bool switched;
     std::ofstream fOut;
     std::streambuf* pOld;
 };

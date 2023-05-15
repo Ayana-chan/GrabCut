@@ -16,6 +16,8 @@ public:
     RGB()=default;
     RGB(unsigned char r, unsigned char g, unsigned char b);
     explicit RGB(cv::Vec3b vec);
+
+    friend std::ostream &operator<<(std::ostream &os, const RGB &o);
 };
 
 

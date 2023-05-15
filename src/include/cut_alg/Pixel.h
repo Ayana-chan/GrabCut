@@ -14,10 +14,10 @@ public:
     unsigned char k; //属于第几个高斯分量。 [1,K]。和alpha一起唯一决定一个高斯分量。
 
     Pixel()=default;
-
     explicit Pixel(const RGB &rgb);
-
     Pixel(const RGB &rgb, unsigned char alpha);
+
+    friend std::ostream &operator<<(std::ostream &os, const Pixel &o);
 };
 
 

@@ -12,14 +12,14 @@ int UIController::getImagesFromDirectory(const std::string &path) {
     for (auto &fileName : fileFullNameList) {
 
         int pos = fileName.find_last_of('\\');
-        std::string img_name(fileName.substr(pos + 1));
-        std::cout << "read new image: " << img_name << std::endl;
+        std::string imgName(fileName.substr(pos + 1));
+        std::cout << "read new image: " << imgName << std::endl;
 
         cv::Mat img = cv::imread(fileName);
         if (!img.data) {
             continue;
         }
-        this->imageMap[fileName] = img;
+        this->imageMap[imgName] = img;
     }
 
     return this->imageMap.size();
@@ -31,7 +31,7 @@ std::vector<std::vector<Pixel>> UIController::analyseImage(const cv::Mat &image)
     for (int i = 0; i < image.rows; i++) {
         analysedImage.push_back(*new std::vector<Pixel>());
         for (int j = 0; j < image.cols; j++) {
-            RGB rgb = *new RGB(image.at<uchar>(i, j));
+            RGB rgb = *new RGB(image.at<cv::Vec3b>(i, j));
             Pixel pixel = *new Pixel(rgb);
             analysedImage[i].push_back(pixel);
         }
