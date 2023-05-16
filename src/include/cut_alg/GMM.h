@@ -15,6 +15,12 @@ public:
 
     std::vector<GMMComponent> componentList; //高斯分量
 
+    void initTrain();
+
+    void addSample(Pixel &pixel);
+
+    void train();
+
     /**
      * 寻找距离最小的component来插入
      * @param pixel

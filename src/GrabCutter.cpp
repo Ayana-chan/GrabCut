@@ -34,6 +34,7 @@ void GrabCutter::start() {
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
     initGMM();
+//TODO: 刚开始直接训练一次来生成方差等
 
 //    ImageOutputer::generateTenColorImage(imageMat);
 }
