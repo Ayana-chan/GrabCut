@@ -3,4 +3,5 @@ target_sources(
         PUBLIC
         OutputSwitcher.cpp
         ImageOutputer.cpp
+        MathUtil.cpp
 )

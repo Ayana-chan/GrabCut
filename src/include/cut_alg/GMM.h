@@ -11,10 +11,15 @@
 
 class GMM {
 public:
-    GMM()=default;
     explicit GMM(int componentNum);
 
     std::vector<GMMComponent> componentList; //高斯分量
+
+    /**
+     * 寻找距离最小的component来插入
+     * @param pixel
+     */
+    void kmeansAddSample(Pixel &pixel);
 
     /**
      * 使用k-means算法对GMM进行初始化
@@ -24,11 +29,7 @@ public:
     void initByKmeans(std::vector<Pixel*> &pixels,int itTimes);
 
 private:
-    /**
-     * 寻找距离最小的component来插入
-     * @param pixel
-     */
-    void kmeansAddSample(Pixel &pixel);
+
 };
 
 

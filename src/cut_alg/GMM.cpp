@@ -38,9 +38,9 @@ void GMM::initByKmeans(std::vector<Pixel*> &pixels,int itTimes) {
 
         //更新模型参数（mean）
         for (auto &component : componentList) {
-            component.kmeansFinishOneIteration();
+            component.calculateMean();
             std::cout << "{size: " << component.getSampleSize() << ", mean: ";
-            component.printMeanStr();
+            component.printMean();
             std::cout<<"} ";
             //清空sample
             component.clearSamples();

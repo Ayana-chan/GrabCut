@@ -6,14 +6,14 @@
 #include "util/OutputSwitcher.h"
 #include "util/ImageOutputer.h"
 
+//GMM的component数量（K）
+#define GMM_K 5
+//kmeans的迭代次数
 #define KMEANS_IT_TIMES 5
 
 using namespace std;
 
-GrabCutter::GrabCutter() {
-    bkGMM = GMM(5);
-    frGMM = GMM(5);
-}
+GrabCutter::GrabCutter() : bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {}
 
 void GrabCutter::start() {
     //更改cout输出目的地

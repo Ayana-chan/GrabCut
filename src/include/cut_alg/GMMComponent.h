@@ -21,6 +21,8 @@ public:
     std::vector<double> mean; //均值，长度为3的向量，对应r、g、b
     std::vector<std::vector<double>> cov; //协方差，3*3的矩阵
 
+    //---kmeans
+
     /**
      * 返回距离（二范式）的平方
      * @param pixel
@@ -32,7 +34,15 @@ public:
 
     void kmeansAddSample(Pixel &pixel);
 
-    void kmeansFinishOneIteration();
+    //---calculate
+
+    //kmeans只要计算mean就够了
+    void calculateMean();
+
+    //计算方差
+    void calculateCov();
+
+    //---sample
 
     void clearSamples();
 
@@ -40,11 +50,19 @@ public:
 
     //---for print
 
-    void printMeanStr();
+    void printMean();
+
+    void printCov();
 
 private:
     GMM *master; //回指所属的GMM
     std::vector<Pixel *> samples; //自己的训练样本
+
+    std::vector<std::vector<double>> inverseCov; //方差的逆矩阵
+    double detCov; //方差的行列式结果
+
+    void calculateDetCov();
+    void calculateInverseCov();
 };
 
 
