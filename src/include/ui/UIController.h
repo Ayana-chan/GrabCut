@@ -31,8 +31,9 @@ public:
      */
     void analyseImage(std::vector<std::vector<Pixel>> &aimVec);
 
-    std::string getImagesFromPath(const std::string& path);
-    void drawRect(const std::string& srcImageName);
+    std::string getImagesFromPath(const std::string &path);
+
+    void drawRect(const std::string &srcImageName);
 
 private:
     static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标

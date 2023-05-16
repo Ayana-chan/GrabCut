@@ -16,7 +16,12 @@ public:
 
     std::vector<GMMComponent> componentList; //高斯分量
 
-    void initByKmeans(std::vector<Pixel*> &pixels);
+    /**
+     * 使用k-means算法对GMM进行初始化
+     * @param pixels 样本集
+     * @param itTimes k-means迭代次数
+     */
+    void initByKmeans(std::vector<Pixel*> &pixels,int itTimes);
 
 private:
     /**

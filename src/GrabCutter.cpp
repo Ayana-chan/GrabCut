@@ -3,9 +3,10 @@
 //
 
 #include "GrabCutter.h"
-#include "cut_alg/Pixel.h"
-#include "ui/UIController.h"
 #include "util/OutputSwitcher.h"
+#include "util/ImageOutputer.h"
+
+#define KMEANS_IT_TIMES 5
 
 using namespace std;
 
@@ -33,6 +34,7 @@ void GrabCutter::start() {
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
     initGMM();
+    ImageOutputer::generateImage(imageMat);
 }
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
@@ -63,9 +65,9 @@ void GrabCutter::initGMM() {
     }
 
     std::cout<<"initByKmeans bkGMM with " << bkSamples.size()<< " bkSamples"<<std::endl;
-    bkGMM.initByKmeans(bkSamples);
+    bkGMM.initByKmeans(bkSamples,KMEANS_IT_TIMES);
     std::cout<<"initByKmeans frGMM with "<< frSamples.size()<< " frSamples"<<std::endl;
-    frGMM.initByKmeans(frSamples);
+    frGMM.initByKmeans(frSamples,KMEANS_IT_TIMES);
 }
 
 

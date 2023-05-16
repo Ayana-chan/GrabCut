@@ -32,7 +32,15 @@ public:
 
     void kmeansAddSample(Pixel &pixel);
 
-    void kmeansCalMean();
+    void kmeansFinishOneIteration();
+
+    void clearSamples();
+
+    int getSampleSize();
+
+    //---for print
+
+    void printMeanStr();
 
 private:
     GMM *master; //回指所属的GMM
