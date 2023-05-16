@@ -17,8 +17,8 @@ GrabCutter::GrabCutter() {
 
 void GrabCutter::start() {
     //更改cout输出目的地
-//    OutputSwitcher outputSwitcher;
-//    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
+    OutputSwitcher outputSwitcher;
+    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
     //输入图像
 
@@ -34,7 +34,15 @@ void GrabCutter::start() {
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
     initGMM();
-    ImageOutputer::generateImage(imageMat);
+
+//    for(auto v:imageMat){
+//        for(auto p:v){
+//            cout<<p<<" ";
+//        }
+//        cout<<endl;
+//    }
+
+    ImageOutputer::generateTenColorImage(imageMat);
 }
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {

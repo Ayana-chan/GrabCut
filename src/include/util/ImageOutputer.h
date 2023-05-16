@@ -11,7 +11,7 @@
 
 class ImageOutputer {
 public:
-    static cv::Mat generateImage(ImageMat &analysedImage);
+    static cv::Mat generateTenColorImage(ImageMat &analysedImage);
 };
 
 
