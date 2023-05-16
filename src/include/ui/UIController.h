@@ -20,6 +20,8 @@ public:
 
     //矩形的对角坐标
     //x是横坐标！
+    int tempPosX1;
+    int tempPosY1;
     int posX1;
     int posY1;
     int posX2;

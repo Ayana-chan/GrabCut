@@ -69,16 +69,25 @@ void UIController::mouseHandler(int event, int x, int y, int, void *srcUIControl
         //开始拖动
 //        std::cout << "Rect: Begin Dragging " << x << " " << y << std::endl;
         uiCon->isDragging = true;
-        uiCon->posX1 = x;
-        uiCon->posY1 = y;
+        uiCon->tempPosX1 = x;
+        uiCon->tempPosY1 = y;
     } else if (event == cv::EVENT_MOUSEMOVE && uiCon->isDragging) {
         //正在拖动
     } else if (event == cv::EVENT_LBUTTONUP && uiCon->isDragging) {
         //结束拖动
 //        std::cout << "Rect: End   Dragging " << x << " " << y << std::endl;
         uiCon->isDragging = false;
+
+        //如果原地点了一下或者拉了直线则不算数
+        if(uiCon->tempPosX1==x || uiCon->tempPosY1==y){
+            return;
+        }
+
         uiCon->posX2 = x;
         uiCon->posY2 = y;
+
+        uiCon->posX1=uiCon->tempPosX1;
+        uiCon->posY1=uiCon->tempPosY1;
 
         //将矩形坐标转化为左上角、右下角
         if (uiCon->posX1 > uiCon->posX2) {
