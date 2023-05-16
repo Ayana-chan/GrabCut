@@ -15,6 +15,15 @@ public:
     explicit GMM(int componentNum);
 
     std::vector<GMMComponent> componentList; //高斯分量
+
+    void initByKmeans(std::vector<Pixel*> &pixels);
+
+private:
+    /**
+     * 寻找距离最小的component来插入
+     * @param pixel
+     */
+    void kmeansAddSample(Pixel &pixel);
 };
 
 

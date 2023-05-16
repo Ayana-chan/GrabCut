@@ -9,14 +9,15 @@
 
 class RGB {
 public:
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
+    uchar r;
+    uchar g;
+    uchar b;
 
     RGB()=default;
-    RGB(unsigned char r, unsigned char g, unsigned char b);
+    RGB(uchar r, uchar g, uchar b);
     explicit RGB(cv::Vec3b vec);
 
+    operator std::vector<uchar>() const;
     friend std::ostream &operator<<(std::ostream &os, const RGB &o);
 };
 

@@ -7,6 +7,8 @@
 
 #include "cut_alg/RGB.h"
 #include "cut_alg/PixelBelongEnum.h"
+#include <vector>
+
 
 class Pixel {
 public:
@@ -20,6 +22,8 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Pixel &o);
 };
+
+typedef std::vector<std::vector<Pixel>> ImageMat;
 
 
 #endif //GRABCUT_PIXEL_H

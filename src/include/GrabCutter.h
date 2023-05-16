@@ -5,11 +5,13 @@
 #ifndef GRABCUT_GRABCUTTER_H
 #define GRABCUT_GRABCUTTER_H
 
+#include "common.h"
+#include "cut_alg/GMM.h"
 #include "ui/UIController.h"
 
 class GrabCutter {
 public:
-    GrabCutter()=default;
+    GrabCutter();
 
     void start();
 
@@ -17,7 +19,9 @@ public:
 
 private:
     UIController uiController;
-    std::vector<std::vector<Pixel>> imageMat;
+    ImageMat imageMat;
+    GMM bkGMM;
+    GMM frGMM;
 
     /**
      * 把矩形以外的所有点变成B_MUST。注：默认为F_PROB
@@ -27,6 +31,8 @@ private:
      * @param maxY
      */
     void updateMatByRect(int minX,int minY,int maxX,int maxY);
+
+    void initGMM();
 };
 
 
