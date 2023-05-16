@@ -16,56 +16,56 @@ cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage) {
                 switch (pixel.k) {
                     case 0:
                         p[j][0] = 0;
-                        p[j][1] = 0;
+                        p[j][1] = 255;
                         p[j][2] = 0;
                         break;
                     case 1:
-                        p[j][0] = 255;
+                        p[j][0] = 0;
                         p[j][1] = 255;
-                        p[j][2] = 255;
+                        p[j][2] = 127;
                         break;
                     case 2:
-                        p[j][0] = 255;
-                        p[j][1] = 0;
-                        p[j][2] = 0;
+                        p[j][0] = 34;
+                        p[j][1] = 139;
+                        p[j][2] = 34;
                         break;
                     case 3:
-                        p[j][0] = 90;
-                        p[j][1] = 90;
-                        p[j][2] = 0;
+                        p[j][0] = 35;
+                        p[j][1] = 142;
+                        p[j][2] = 107;
                         break;
                     case 4:
-                        p[j][0] = 120;
-                        p[j][1] = 120;
+                        p[j][0] = 140;
+                        p[j][1] = 199;
                         p[j][2] = 0;
                         break;
                 }
             } else {
                 switch (pixel.k) {
                     case 0:
-                        p[j][0] = 120;
-                        p[j][1] = 120;
-                        p[j][2] = 0;
+                        p[j][0] = 0;
+                        p[j][1] = 255;
+                        p[j][2] = 255;
                         break;
                     case 1:
-                        p[j][0] = 150;
-                        p[j][1] = 150;
-                        p[j][2] = 0;
+                        p[j][0] = 18;
+                        p[j][1] = 153;
+                        p[j][2] = 255;
                         break;
                     case 2:
-                        p[j][0] = 180;
-                        p[j][1] = 180;
-                        p[j][2] = 0;
+                        p[j][0] = 87;
+                        p[j][1] = 207;
+                        p[j][2] = 227;
                         break;
                     case 3:
-                        p[j][0] = 210;
-                        p[j][1] = 210;
-                        p[j][2] = 0;
+                        p[j][0] = 0;
+                        p[j][1] = 215;
+                        p[j][2] = 255;
                         break;
                     case 4:
-                        p[j][0] = 240;
-                        p[j][1] = 240;
-                        p[j][2] = 0;
+                        p[j][0] = 132;
+                        p[j][1] = 227;
+                        p[j][2] = 255;
                         break;
                 }
             }
