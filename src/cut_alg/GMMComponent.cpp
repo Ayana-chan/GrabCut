@@ -207,12 +207,12 @@ void GMMComponent::calculateInverseCov() {
     covInverse[0][0] = (cov[1][1] * cov[2][2] - cov[1][2] * cov[2][1]) / covDet;
     covInverse[1][0] = -(cov[1][0] * cov[2][2] - cov[1][2] * cov[2][0]) / covDet;
     covInverse[2][0] = (cov[1][0] * cov[2][1] - cov[1][1] * cov[2][0]) / covDet;
-    covInverse[0][1] = -(cov[0][1] * cov[2][2] - cov[1][2] * cov[1][1]) / covDet;
+    covInverse[0][1] = -(cov[0][1] * cov[2][2] - cov[0][2] * cov[2][1]) / covDet;
     covInverse[1][1] = (cov[0][0] * cov[2][2] - cov[0][2] * cov[2][0]) / covDet;
     covInverse[2][1] = -(cov[0][0] * cov[2][1] - cov[0][1] * cov[2][0]) / covDet;
-    covInverse[0][1] = (cov[0][1] * cov[1][2] - cov[0][2] * cov[1][1]) / covDet;
-    covInverse[1][1] = -(cov[0][0] * cov[1][2] - cov[0][2] * cov[1][0]) / covDet;
-    covInverse[2][1] = (cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0]) / covDet;
+    covInverse[0][2] = (cov[0][1] * cov[1][2] - cov[0][2] * cov[1][1]) / covDet;
+    covInverse[1][2] = -(cov[0][0] * cov[1][2] - cov[0][2] * cov[1][0]) / covDet;
+    covInverse[2][2] = (cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0]) / covDet;
 }
 
 
