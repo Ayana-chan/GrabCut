@@ -76,3 +76,28 @@ cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage) {
 
     return image;
 }
+
+cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage) {
+
+    std::cout<<"generateTenColorImage..."<<std::endl;
+    cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
+    for (int i = 0; i < image.rows; i++) {
+        auto *p = image.ptr<cv::Vec3b>(i);
+        for (int j = 0; j < image.cols; j++) {
+            auto &pixel = analysedImage[i][j];
+            if (pixel.alpha == PixelBelongEnum::B_PROB || pixel.alpha == PixelBelongEnum::B_MUST) {
+                p[j][0] = 0;
+                p[j][1] = 0;
+                p[j][2] = 0;
+            } else {
+                p[j][0] = pixel.rgb.b;
+                p[j][1] = pixel.rgb.g;
+                p[j][2] = pixel.rgb.r;
+            }
+        }
+    }
+    imshow("Output Image", image);
+    cv::waitKey(0);
+
+    return image;
+}

@@ -25,8 +25,8 @@ GrabCutter::~GrabCutter() {
 
 void GrabCutter::start(std::string path) {
     //更改cout输出目的地
-//    OutputSwitcher outputSwitcher;
-//    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
+    OutputSwitcher outputSwitcher;
+    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
     //输入图像
 
@@ -47,7 +47,7 @@ void GrabCutter::start(std::string path) {
     //迭代训练
 
     calculateBeta();
-    startGMM(1);
+    startGMM(3);
 
 }
 
@@ -163,16 +163,38 @@ void GrabCutter::startGMM(int itTimes) {
         bkGMM.train();
         frGMM.train();
 
-        //TODO step3:切割
+        //step3:切割重整
         generateGraph();
+        cout<<"--- Maxflow ... ---"<<endl;
         double energy=graph->maxflow();
         cout<<"=== Max Flow Energy: "<<energy<<" ==="<<endl;
         //修改前景背景
+        for(int i=0;i<imageMat.size();i++){
+            for(int j=0;j<imageMat[0].size();j++){
+                //用户指定的不能改
+                if(imageMat[i][j].alpha==PixelBelongEnum::B_MUST || imageMat[i][j].alpha==PixelBelongEnum::F_MUST){
+                    continue;
+                }
 
+                int currIndex=i*imageMat[0].size()+j;
+                if(graph->what_segment(currIndex,GraphType::SOURCE)){
+                    //前景
+                    imageMat[i][j].alpha=PixelBelongEnum::F_PROB;
+                }else{
+                    //背景
+                    imageMat[i][j].alpha=PixelBelongEnum::B_PROB;
+                }
+            }
+        }
+
+        ImageOutputer::generateTenColorImage(imageMat);
+        ImageOutputer::generateHandledImage(imageMat);
     }
 }
 
 void GrabCutter::generateGraph() {
+
+    cout<<"--- Generate Graph ... ---"<<endl;
 
     int rows = imageMat.size();
     int cols = imageMat[0].size();
