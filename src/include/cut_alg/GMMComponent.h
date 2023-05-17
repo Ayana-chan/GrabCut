@@ -28,6 +28,8 @@ public:
      */
     double getProbability(Pixel &pixel);
 
+    void addSample(Pixel &pixel);
+
     //---kmeans
 
     /**

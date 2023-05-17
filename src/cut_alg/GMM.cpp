@@ -19,7 +19,22 @@ void GMM::initTrain() {
 }
 
 void GMM::addSample(Pixel &pixel) {
-    //TODO: 根据getProbability判断在哪里插入
+
+    double min=-1;
+    int minArg=0;
+    for(int i=0;i<componentList.size();i++){
+        double pro=componentList[i].getProbability(pixel);
+        //无样本的分量，忽视
+        if(pro<0){
+            continue;
+        }
+        if(min<0 || pro<min){
+            min=pro;
+            minArg=i;
+        }
+    }
+
+    componentList[minArg].addSample(pixel);
 }
 
 void GMM::train() {

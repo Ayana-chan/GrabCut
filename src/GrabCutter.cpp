@@ -27,14 +27,19 @@ void GrabCutter::start(std::string path) {
     cout << "Image Size: " << imageMat.size() << "*" << imageMat[0].size() << endl;
 
     //矩形输入与初始化
-    std::cout<<std::endl;
+
+    std::cout << std::endl;
     uiController.drawRect(uiController.imageName);
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
-    std::cout<<std::endl;
+    std::cout << std::endl;
     initGMM();
+    //ImageOutputer::generateTenColorImage(imageMat);
 
-//    ImageOutputer::generateTenColorImage(imageMat);
+    //迭代训练
+
+    startGMM(1);
+
 }
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
@@ -68,6 +73,46 @@ void GrabCutter::initGMM() {
     //训练一次来生成方差等
     bkGMM.train();
     frGMM.train();
+}
+
+void GrabCutter::startGMM(int itTimes) {
+    //当前正在进行的迭代次数
+    int it=0;
+    //不限制迭代次数，直到收敛
+    if(itTimes<=0){
+        itTimes=-1;
+    }
+
+    while(itTimes!=0){
+        if(itTimes>0){
+            --itTimes;
+        }
+        ++it;
+        cout<<"--- Start Train "<<it<<"---"<<endl;
+
+        //迭代主体
+
+        //初始化
+        bkGMM.initTrain();
+        frGMM.initTrain();
+
+        //step1:分配样本
+        for(auto &v:imageMat){
+            for(auto &p:v){
+                if(p.alpha==PixelBelongEnum::B_MUST || p.alpha==PixelBelongEnum::B_PROB){
+                    bkGMM.addSample(p);
+                }else{
+                    frGMM.addSample(p);
+                }
+            }
+        }
+
+        //step2:GMM根据样本进行学习
+        bkGMM.train();
+        frGMM.train();
+
+        //TODO step3:切割
+    }
 }
 
 

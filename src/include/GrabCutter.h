@@ -32,7 +32,16 @@ private:
      */
     void updateMatByRect(int minX,int minY,int maxX,int maxY);
 
+    /**
+     * 使用kmeans初始化GMM并进行第零次（预）训练
+     */
     void initGMM();
+
+    /**
+     * 开始训练
+     * @param itTimes 迭代次数，不为正表示不限次数
+     */
+    void startGMM(int itTimes);
 };
 
 

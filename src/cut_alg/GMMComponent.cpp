@@ -50,6 +50,12 @@ double GMMComponent::getProbability(Pixel &pixel) {
     return ans;
 }
 
+void GMMComponent::addSample(Pixel &pixel) {
+    samples.emplace_back(&pixel);
+    //修改点的信息
+    pixel.k=number;
+}
+
 double GMMComponent::kmeansGetDistance(const Pixel &pixel) {
     double ans = std::pow(pixel.rgb.r - this->mean[0], 2) +
                  std::pow(pixel.rgb.g - this->mean[1], 2) +
@@ -214,6 +220,8 @@ void GMMComponent::calculateInverseCov() {
     covInverse[1][2] = -(cov[0][0] * cov[1][2] - cov[0][2] * cov[1][0]) / covDet;
     covInverse[2][2] = (cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0]) / covDet;
 }
+
+
 
 
 
