@@ -77,6 +77,7 @@ void GMMComponent::kmeansAddSample(Pixel &pixel) {
 
 void GMMComponent::calculateCoefs(int &sum) {
     coefs = (double) (getSampleSize()) / sum;
+    cout<<"Coefs " << number << " : "<<getSampleSize()<<" / "<<sum<<" = "<< coefs <<endl;
 }
 
 void GMMComponent::calculateMean() {

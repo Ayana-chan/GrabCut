@@ -167,6 +167,8 @@ void GrabCutter::startGMM(int itTimes) {
         generateGraph();
         double energy=graph->maxflow();
         cout<<"=== Max Flow Energy: "<<energy<<" ==="<<endl;
+        //修改前景背景
+
     }
 }
 
@@ -195,7 +197,7 @@ void GrabCutter::generateGraph() {
     //V
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            int currIndex=i*rows+j;
+            int currIndex=i*cols+j;
             //right-up
             if (i > 0 && j < cols - 1) {
                 double vv= getVofPixels(imageMat[i][j],imageMat[i-1][j+1]);
@@ -213,7 +215,7 @@ void GrabCutter::generateGraph() {
             }
             //down
             if (i < rows - 1) {
-                double vv=getVofPixels(imageMat[i][j],imageMat[i-1][j]);
+                double vv=getVofPixels(imageMat[i][j],imageMat[i+1][j]);
                 graph->add_edge(currIndex,currIndex+cols,vv,vv);//双向边，但最小割只会切一条
             }
         }

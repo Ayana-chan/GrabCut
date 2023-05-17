@@ -13,7 +13,7 @@ GMM::GMM(int componentNum) {
 
 void GMM::initTrain() {
     //清空样本
-    for (auto component:componentList) {
+    for (auto &component:componentList) {
         component.clearSamples();
     }
 }
@@ -40,11 +40,11 @@ void GMM::addSample(Pixel &pixel) {
 void GMM::train() {
 
     int sum = 0;//记录总样本数
-    for (auto component:componentList) {
-        sum += component.getSampleSize();
+    for (auto &component:componentList) {
+        sum += component.getSampleSize();//TODO 有问题
     }
 
-    for (auto component:componentList) {
+    for (auto &component:componentList) {
         component.calculateCoefs(sum);
         component.calculateMean();
         component.calculateCov();
