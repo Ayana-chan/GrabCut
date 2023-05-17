@@ -13,7 +13,7 @@ class GrabCutter {
 public:
     GrabCutter();
 
-    void start();
+    void start(std::string path);
 
     ~GrabCutter()=default;
 

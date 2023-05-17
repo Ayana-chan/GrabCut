@@ -11,3 +11,5 @@ add_subdirectory(src)
 
 
 
+
+add_executable(tempTest tempTest.cpp)
