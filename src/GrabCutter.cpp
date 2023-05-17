@@ -10,6 +10,8 @@
 #define GMM_K 5
 //kmeans的迭代次数
 #define KMEANS_IT_TIMES 3
+//β的最小值，小于此值视作0
+#define MINIMUM_BETA 0.00001
 
 using namespace std;
 
@@ -38,6 +40,7 @@ void GrabCutter::start(std::string path) {
 
     //迭代训练
 
+    calculateBeta();
     startGMM(1);
 
 }
@@ -75,20 +78,63 @@ void GrabCutter::initGMM() {
     frGMM.train();
 }
 
+void GrabCutter::calculateBeta() {
+
+    double totalDistance = 0;
+
+    auto rows = imageMat.size();
+    auto cols = imageMat[0].size();
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            //每个像素都分为4个方向来匹配邻居，这样所有像素计算完毕后就能覆盖所有邻居关系
+            //right-up
+            if (i > 0 && j < cols - 1) {
+                totalDistance += imageMat[i][j].rgb.calDistanceTo(imageMat[i - 1][j + 1].rgb);
+            }
+            //right
+            if (j < cols - 1) {
+                totalDistance += imageMat[i][j].rgb.calDistanceTo(imageMat[i][j + 1].rgb);
+            }
+            //right-down
+            if (i < rows - 1 && j < cols - 1) {
+                totalDistance += imageMat[i][j].rgb.calDistanceTo(imageMat[i + 1][j + 1].rgb);
+            }
+            //down
+            if (i < rows - 1) {
+                totalDistance += imageMat[i][j].rgb.calDistanceTo(imageMat[i + 1][j].rgb);
+            }
+
+            //纯色图的累计距离极小，可能导致溢出
+            if (totalDistance < MINIMUM_BETA) {
+                totalDistance = MINIMUM_BETA;
+            }
+
+            double edgeNum = 4 * rows * cols;//总量
+            //right-up、right-down、down会去掉三个cols
+            //right-up、right、right-down会去掉三个rows
+            //但右上角的right-up和右下角的right-down重复了，则补回2
+            edgeNum -= 3 * cols + 3 * rows - 2;
+
+            beta = double(1) / (2 * totalDistance / edgeNum);
+        }
+    }
+}
+
 void GrabCutter::startGMM(int itTimes) {
     //当前正在进行的迭代次数
-    int it=0;
+    int it = 0;
     //不限制迭代次数，直到收敛
-    if(itTimes<=0){
-        itTimes=-1;
+    if (itTimes <= 0) {
+        itTimes = -1;
     }
 
-    while(itTimes!=0){
-        if(itTimes>0){
+    while (itTimes != 0) {
+        if (itTimes > 0) {
             --itTimes;
         }
         ++it;
-        cout<<"--- Start Train "<<it<<"---"<<endl;
+        cout << "--- Start Train " << it << "---" << endl;
 
         //迭代主体
 
@@ -97,11 +143,11 @@ void GrabCutter::startGMM(int itTimes) {
         frGMM.initTrain();
 
         //step1:分配样本
-        for(auto &v:imageMat){
-            for(auto &p:v){
-                if(p.alpha==PixelBelongEnum::B_MUST || p.alpha==PixelBelongEnum::B_PROB){
+        for (auto &v:imageMat) {
+            for (auto &p:v) {
+                if (p.alpha == PixelBelongEnum::B_MUST || p.alpha == PixelBelongEnum::B_PROB) {
                     bkGMM.addSample(p);
-                }else{
+                } else {
                     frGMM.addSample(p);
                 }
             }
@@ -114,6 +160,8 @@ void GrabCutter::startGMM(int itTimes) {
         //TODO step3:切割
     }
 }
+
+
 
 
 

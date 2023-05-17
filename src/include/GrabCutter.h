@@ -20,6 +20,7 @@ public:
 private:
     UIController uiController;
     ImageMat imageMat;
+    double beta; //衡量对比度
     GMM bkGMM;
     GMM frGMM;
 
@@ -36,6 +37,11 @@ private:
      * 使用kmeans初始化GMM并进行第零次（预）训练
      */
     void initGMM();
+
+    /**
+     * 计算β，以衡量对比度
+     */
+    void calculateBeta();
 
     /**
      * 开始训练

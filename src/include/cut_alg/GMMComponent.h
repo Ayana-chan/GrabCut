@@ -17,8 +17,6 @@ public:
 
     int number; //Component编号，0~K-1
 
-
-
     //---gmm
 
     /**

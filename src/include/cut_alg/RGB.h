@@ -13,15 +13,17 @@ public:
     uchar g;
     uchar b;
 
-    RGB()=default;
+    RGB() = default;
+
     RGB(uchar r, uchar g, uchar b);
+
     explicit RGB(cv::Vec3b vec);
 
-    operator std::vector<uchar>() const;
+    double calDistanceTo(RGB &aim);
+
+//    operator std::vector<uchar>() const;
     friend std::ostream &operator<<(std::ostream &os, const RGB &o);
 };
-
-
 
 
 #endif //GRABCUT_RGB_H
