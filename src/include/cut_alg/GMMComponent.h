@@ -21,6 +21,11 @@ public:
 
     //---gmm
 
+    /**
+     * 获取一个像素属于该高斯分量的概率，也即返回D
+     * @param pixel
+     * @return 若权重为0（没有样本），则返回-1
+     */
     double getProbability(Pixel &pixel);
 
     //---kmeans
@@ -38,7 +43,7 @@ public:
 
     //---calculate
 
-    //计算权重。需要传入总个数
+    //计算权重。需要传入总个数。权重可能为0
     void calculateCoefs(int &sum);
 
     //计算均值。kmeans只要计算mean就够了
@@ -69,8 +74,8 @@ private:
     GMM *master; //回指所属的GMM
     std::vector<Pixel *> samples; //自己的训练样本
 
-    std::vector<std::vector<double>> inverseCov; //方差的逆矩阵
-    double detCov; //方差的行列式结果
+    std::vector<std::vector<double>> covInverse; //方差的逆矩阵
+    double covDet; //方差的行列式结果
 
     void calculateDetCov();
 

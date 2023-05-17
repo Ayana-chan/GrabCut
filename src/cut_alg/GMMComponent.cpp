@@ -2,7 +2,11 @@
 // Created by DeathWind on 2023/5/15.
 //
 
+#include <cmath>
+
 #include "cut_alg/GMMComponent.h"
+
+using namespace std;
 
 #define MINIMUM_DET 0.00001
 
@@ -10,14 +14,40 @@ GMMComponent::GMMComponent(GMM *master, int number) {
     this->number = number;
     this->mean = std::vector<double>(3, 0);
     this->cov = std::vector<std::vector<double>>(3, std::vector<double>(3));
-    this->inverseCov = std::vector<std::vector<double>>(3, std::vector<double>(3));
+    this->covInverse = std::vector<std::vector<double>>(3, std::vector<double>(3));
     this->master = master;
 }
 
 double GMMComponent::getProbability(Pixel &pixel) {
-    //TODO getProbability
 
-    return 0;
+    //若权重为0（没有样本），则返回-1
+    if (coefs == 0) {
+        return -1;
+    }
+
+    double ans1 = -log(coefs);
+
+    double ans2 = 0.5 * log(covDet);
+
+    //012
+    //345
+    //678
+    //p^T*M*p=0RR+4GG+8BB+(1+3)RG+(2+6)RB+(5+7)GB
+    double dr = pixel.rgb.r - mean[0];
+    double dg = pixel.rgb.g - mean[1];
+    double db = pixel.rgb.b - mean[2];
+
+    double ans3 = covInverse[0][0] * dr * dr +
+                  covInverse[1][1] * dg * dg +
+                  covInverse[2][2] * db * db +
+                  (covInverse[0][1] + covInverse[1][0]) * dr * dg +
+                  (covInverse[0][2] + covInverse[2][0]) * dr * db +
+                  (covInverse[1][2] + covInverse[2][1]) * dg * db;
+    ans3 /= 2;
+
+    double ans = ans1 + ans2 + ans3;
+
+    return ans;
 }
 
 double GMMComponent::kmeansGetDistance(const Pixel &pixel) {
@@ -40,7 +70,7 @@ void GMMComponent::kmeansAddSample(Pixel &pixel) {
 }
 
 void GMMComponent::calculateCoefs(int &sum) {
-    coefs=(double)(getSampleSize())/sum;
+    coefs = (double) (getSampleSize()) / sum;
 }
 
 void GMMComponent::calculateMean() {
@@ -101,7 +131,7 @@ void GMMComponent::calculateCov() {
     //计算行列式
     calculateDetCov();
     //几乎纯色的图像里协方差的行列式非常接近于0，取log之后极小，同时也会导致逆矩阵非常大，因此添加噪声
-    if (detCov <= MINIMUM_DET) {
+    if (covDet <= MINIMUM_DET) {
         //在对角线上添加噪声，暂不知副作用
         cov[0][0] += 0.01;
         cov[1][1] += 0.01;
@@ -123,7 +153,14 @@ int GMMComponent::getSampleSize() {
 }
 
 void GMMComponent::printParameters() {
-//TODO 打印所有参数信息
+    std::cout<<std::endl<<"--- GMM Component "<<number<<" Para begin---"<<std::endl;
+    std::cout<<"mean: ";
+    printMean();
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+    printCov();
+    std::cout<<"--- GMM Component "<<number<<" Para end---"<<std::endl;
+    std::cout<<std::endl;
 }
 
 void GMMComponent::printMean() {
@@ -131,35 +168,35 @@ void GMMComponent::printMean() {
 }
 
 void GMMComponent::printCov() {
-    std::cout<<"cov:"<<std::endl;
-    for(int i=0;i<cov.size();i++){
-        for(int j=0;j<cov[0].size();j++){
-            std::cout<<cov[i][j];
-            if(j<cov[0].size()-1){
-                std::cout<<",";
-            }else{
-                std::cout<<";";
+    std::cout << "cov:" << std::endl;
+    for (int i = 0; i < cov.size(); i++) {
+        for (int j = 0; j < cov[0].size(); j++) {
+            std::cout << cov[i][j];
+            if (j < cov[0].size() - 1) {
+                std::cout << ",";
+            } else {
+                std::cout << ";"<<std::endl;
             }
         }
     }
-    std::cout<<std::endl;
-    std::cout<<"det: "<<detCov;
-    for(int i=0;i<inverseCov.size();i++){
-        for(int j=0;j<inverseCov[0].size();j++){
-            std::cout<<inverseCov[i][j];
-            if(j<inverseCov[0].size()-1){
-                std::cout<<",";
-            }else{
-                std::cout<<";";
+    std::cout << std::endl;
+    std::cout << "det: " << covDet<<std::endl<<std::endl;
+    std::cout << "cov inverse:" << std::endl;
+    for (int i = 0; i < covInverse.size(); i++) {
+        for (int j = 0; j < covInverse[0].size(); j++) {
+            std::cout << covInverse[i][j];
+            if (j < covInverse[0].size() - 1) {
+                std::cout << ",";
+            } else {
+                std::cout << ";"<<std::endl;
             }
         }
     }
-    std::cout<<std::endl;
 }
 
 
 void GMMComponent::calculateDetCov() {
-    detCov = cov[0][0] * (cov[1][1] * cov[2][2] - cov[1][2] * cov[2][1])
+    covDet = cov[0][0] * (cov[1][1] * cov[2][2] - cov[1][2] * cov[2][1])
              - cov[0][1] * (cov[1][0] * cov[2][2] - cov[1][2] * cov[2][0])
              + cov[0][2] * (cov[1][0] * cov[2][1] - cov[1][1] * cov[2][0]);
 }
@@ -167,15 +204,15 @@ void GMMComponent::calculateDetCov() {
 void GMMComponent::calculateInverseCov() {
     //A^-1 = A* / |A|
     //A*的每一项为除自己所在行列以外剩余矩阵的行列式，再附上对应的正负好，计算完后再转置
-    inverseCov[0][0] = (cov[1][1] * cov[2][2] - cov[1][2] * cov[2][1]) / detCov;
-    inverseCov[1][0] = -(cov[1][0] * cov[2][2] - cov[1][2] * cov[2][0]) / detCov;
-    inverseCov[2][0] = (cov[1][0] * cov[2][1] - cov[1][1] * cov[2][0]) / detCov;
-    inverseCov[0][1] = -(cov[0][1] * cov[2][2] - cov[1][2] * cov[1][1]) / detCov;
-    inverseCov[1][1] = (cov[0][0] * cov[2][2] - cov[0][2] * cov[2][0]) / detCov;
-    inverseCov[2][1] = -(cov[0][0] * cov[2][1] - cov[0][1] * cov[2][0]) / detCov;
-    inverseCov[0][1] = (cov[0][1] * cov[1][2] - cov[0][2] * cov[1][1]) / detCov;
-    inverseCov[1][1] = -(cov[0][0] * cov[1][2] - cov[0][2] * cov[1][0]) / detCov;
-    inverseCov[2][1] = (cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0]) / detCov;
+    covInverse[0][0] = (cov[1][1] * cov[2][2] - cov[1][2] * cov[2][1]) / covDet;
+    covInverse[1][0] = -(cov[1][0] * cov[2][2] - cov[1][2] * cov[2][0]) / covDet;
+    covInverse[2][0] = (cov[1][0] * cov[2][1] - cov[1][1] * cov[2][0]) / covDet;
+    covInverse[0][1] = -(cov[0][1] * cov[2][2] - cov[1][2] * cov[1][1]) / covDet;
+    covInverse[1][1] = (cov[0][0] * cov[2][2] - cov[0][2] * cov[2][0]) / covDet;
+    covInverse[2][1] = -(cov[0][0] * cov[2][1] - cov[0][1] * cov[2][0]) / covDet;
+    covInverse[0][1] = (cov[0][1] * cov[1][2] - cov[0][2] * cov[1][1]) / covDet;
+    covInverse[1][1] = -(cov[0][0] * cov[1][2] - cov[0][2] * cov[1][0]) / covDet;
+    covInverse[2][1] = (cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0]) / covDet;
 }
 
 

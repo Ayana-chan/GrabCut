@@ -21,19 +21,20 @@ void GrabCutter::start(std::string path) {
     outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
     //输入图像
+
     uiController.getImagesFromPath(path);
     uiController.analyseImage(imageMat);
     cout << "Image Size: " << imageMat.size() << "*" << imageMat[0].size() << endl;
 
     //矩形输入与初始化
-
+    std::cout<<std::endl;
     uiController.drawRect(uiController.imageName);
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
+    std::cout<<std::endl;
     initGMM();
-//TODO: 刚开始直接训练一次来生成方差等
 
-    ImageOutputer::generateTenColorImage(imageMat);
+//    ImageOutputer::generateTenColorImage(imageMat);
 }
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
@@ -63,6 +64,10 @@ void GrabCutter::initGMM() {
     bkGMM.initByKmeans(bkSamples, KMEANS_IT_TIMES);
     std::cout << "initByKmeans frGMM with " << frSamples.size() << " frSamples" << std::endl;
     frGMM.initByKmeans(frSamples, KMEANS_IT_TIMES);
+
+    //训练一次来生成方差等
+    bkGMM.train();
+    frGMM.train();
 }
 
 
