@@ -9,7 +9,7 @@
 //GMM的component数量（K）
 #define GMM_K 5
 //kmeans的迭代次数
-#define KMEANS_IT_TIMES 3
+#define KMEANS_IT_TIMES 15
 //β的最小值，小于此值视作0
 #define MINIMUM_BETA 0.00001
 
@@ -41,14 +41,27 @@ void GrabCutter::start(std::string path) {
     updateMatByRect(uiController.posX1, uiController.posY1,
                     uiController.posX2, uiController.posY2);
     std::cout << std::endl;
+    auto start = std::chrono::system_clock::now();
     initGMM();
+
+    //计算时间
+    auto end = std::chrono::system_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    cout << "===== GMM INIT DURATION: " << elapsed <<"ms =====" << endl;
     //ImageOutputer::generateTenColorImage(imageMat);
 
     //迭代训练
 
     calculateBeta();
-    startGMM(3);
+    startGMM(2);
 
+    //计算时间
+    end = std::chrono::system_clock::now();
+    elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    cout << "===== GMM TOTAL DURATION: " << elapsed <<"ms =====" << endl;
+
+    ImageOutputer::generateTenColorImage(imageMat);
+    ImageOutputer::generateHandledImage(imageMat);
 }
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
@@ -148,6 +161,8 @@ void GrabCutter::startGMM(int itTimes) {
         bkGMM.initTrain();
         frGMM.initTrain();
 
+        auto start = std::chrono::system_clock::now();
+
         //step1:分配样本
         for (auto &v:imageMat) {
             for (auto &p:v) {
@@ -163,11 +178,25 @@ void GrabCutter::startGMM(int itTimes) {
         bkGMM.train();
         frGMM.train();
 
+        auto end = std::chrono::system_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        cout << "===== GMM BEFORE TRAIN DURATION: " << elapsed <<"ms" <<" =====" << endl;
+
         //step3:切割重整
         generateGraph();
+
+        end = std::chrono::system_clock::now();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        cout << "===== GMM GenerateGraph TRAIN DURATION: " << elapsed <<"ms" <<" =====" << endl;
+
         cout<<"--- Maxflow ... ---"<<endl;
         double energy=graph->maxflow();
         cout<<"=== Max Flow Energy: "<<energy<<" ==="<<endl;
+
+        end = std::chrono::system_clock::now();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        cout << "===== GMM MAXFLOW DURATION: " << elapsed <<"ms" <<" =====" << endl;
+
         //修改前景背景
         for(int i=0;i<imageMat.size();i++){
             for(int j=0;j<imageMat[0].size();j++){
@@ -187,8 +216,8 @@ void GrabCutter::startGMM(int itTimes) {
             }
         }
 
-        ImageOutputer::generateTenColorImage(imageMat);
-        ImageOutputer::generateHandledImage(imageMat);
+//        ImageOutputer::generateTenColorImage(imageMat);
+//        ImageOutputer::generateHandledImage(imageMat);
     }
 }
 

@@ -5,6 +5,8 @@
 #ifndef GRABCUT_GRABCUTTER_H
 #define GRABCUT_GRABCUTTER_H
 
+#include <chrono>
+
 #include "common.h"
 #include "cut_alg/GMM.h"
 #include "ui/UIController.h"
