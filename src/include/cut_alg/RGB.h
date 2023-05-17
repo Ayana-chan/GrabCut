@@ -19,6 +19,11 @@ public:
 
     explicit RGB(cv::Vec3b vec);
 
+    /**
+     * 计算自己与目标的颜色空间距离的平方
+     * @param aim
+     * @return 二范式的平方
+     */
     double calDistanceTo(RGB &aim);
 
 //    operator std::vector<uchar>() const;

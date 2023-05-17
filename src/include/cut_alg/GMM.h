@@ -21,6 +21,8 @@ public:
 
     void train();
 
+    double getMinProbability(Pixel &pixel);
+
     /**
      * 使用k-means算法对GMM进行初始化
      * @param pixels 样本集

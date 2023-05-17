@@ -15,12 +15,18 @@
 
 using namespace std;
 
-GrabCutter::GrabCutter() : bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {}
+GrabCutter::GrabCutter() : bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {
+    graph= nullptr;
+}
+
+GrabCutter::~GrabCutter() {
+    delete(graph);
+}
 
 void GrabCutter::start(std::string path) {
     //更改cout输出目的地
-    OutputSwitcher outputSwitcher;
-    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
+//    OutputSwitcher outputSwitcher;
+//    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
 
     //输入图像
 
@@ -104,21 +110,21 @@ void GrabCutter::calculateBeta() {
             if (i < rows - 1) {
                 totalDistance += imageMat[i][j].rgb.calDistanceTo(imageMat[i + 1][j].rgb);
             }
-
-            //纯色图的累计距离极小，可能导致溢出
-            if (totalDistance < MINIMUM_BETA) {
-                totalDistance = MINIMUM_BETA;
-            }
-
-            double edgeNum = 4 * rows * cols;//总量
-            //right-up、right-down、down会去掉三个cols
-            //right-up、right、right-down会去掉三个rows
-            //但右上角的right-up和右下角的right-down重复了，则补回2
-            edgeNum -= 3 * cols + 3 * rows - 2;
-
-            beta = double(1) / (2 * totalDistance / edgeNum);
         }
     }
+
+    //纯色图的累计距离极小，可能导致溢出
+    if (totalDistance < MINIMUM_BETA) {
+        totalDistance = MINIMUM_BETA;
+    }
+
+    double edgeNum = 4 * rows * cols;//总量
+    //right-up、right-down、down会去掉三个cols
+    //right-up、right、right-down会去掉三个rows
+    //但右上角的right-up和右下角的right-down重复了，则补回2
+    edgeNum -= 3 * cols + 3 * rows - 2;
+
+    beta = double(1) / (2 * totalDistance / edgeNum);
 }
 
 void GrabCutter::startGMM(int itTimes) {
@@ -158,8 +164,71 @@ void GrabCutter::startGMM(int itTimes) {
         frGMM.train();
 
         //TODO step3:切割
+        generateGraph();
+        double energy=graph->maxflow();
+        cout<<"=== Max Flow Energy: "<<energy<<" ==="<<endl;
     }
 }
+
+void GrabCutter::generateGraph() {
+
+    int rows = imageMat.size();
+    int cols = imageMat[0].size();
+
+    int nodeNum = rows * cols + 2;//可能不需要这个+2
+    int edgeNum = 4 * rows * cols - (3 * cols + 3 * rows - 2); //n-link
+    edgeNum += 2 * nodeNum; //t-link
+
+    delete(graph);
+    graph= new GraphType(nodeNum, edgeNum);
+
+    //U
+    for (int i = 0; i < imageMat.size(); i++) {
+        for (int j = 0; j < imageMat[0].size(); j++) {
+            auto &pixel = imageMat[i][j];
+            int index = graph->add_node();
+            //source前景，sink背景 TODO 确定的像素点可能不需要去跑模型
+            graph->add_tweights(index, frGMM.getMinProbability(pixel), bkGMM.getMinProbability(pixel));
+        }
+    }
+
+    //V
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            int currIndex=i*rows+j;
+            //right-up
+            if (i > 0 && j < cols - 1) {
+                double vv= getVofPixels(imageMat[i][j],imageMat[i-1][j+1]);
+                graph->add_edge(currIndex,currIndex-cols+1,vv,vv);//双向边，但最小割只会切一条
+            }
+            //right
+            if (j < cols - 1) {
+                double vv=getVofPixels(imageMat[i][j],imageMat[i][j+1]);
+                graph->add_edge(currIndex,currIndex+1,vv,vv);//双向边，但最小割只会切一条
+            }
+            //right-down
+            if (i < rows - 1 && j < cols - 1) {
+                double vv=getVofPixels(imageMat[i][j],imageMat[i+1][j+1]);
+                graph->add_edge(currIndex,currIndex+cols+1,vv,vv);//双向边，但最小割只会切一条
+            }
+            //down
+            if (i < rows - 1) {
+                double vv=getVofPixels(imageMat[i][j],imageMat[i-1][j]);
+                graph->add_edge(currIndex,currIndex+cols,vv,vv);//双向边，但最小割只会切一条
+            }
+        }
+    }
+
+}
+
+double GrabCutter::getVofPixels(Pixel &p1,Pixel &p2) {
+    double v=p1.rgb.calDistanceTo(p2.rgb);
+    v*=-beta;
+    v=exp(v);
+    v*=50; //gamma（γ）
+    return v;
+}
+
 
 
 

@@ -95,6 +95,23 @@ void GMM::initByKmeans(std::vector<Pixel *> &pixels, int itTimes) {
     std::cout << "--- End   K-Means Iteration ---" << std::endl;
 }
 
+double GMM::getMinProbability(Pixel &pixel) {
+
+    double min=-1;
+    for(int i=0;i<componentList.size();i++){
+        double pro=componentList[i].getProbability(pixel);
+        //无样本的分量，忽视
+        if(pro<0){
+            continue;
+        }
+        if(min<0 || pro<min){
+            min=pro;
+        }
+    }
+
+    return min;
+}
+
 void GMM::kmeansAddSample(Pixel &pixel) {
     double min = componentList[0].kmeansGetDistance(pixel);
     int minArg = 0;
@@ -108,6 +125,8 @@ void GMM::kmeansAddSample(Pixel &pixel) {
     }
     componentList[minArg].kmeansAddSample(pixel);
 }
+
+
 
 
 
