@@ -78,7 +78,7 @@ cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage,const std::
 
 cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage,const std::string& name) {
 
-    std::cout<<"generateTenColorImage..."<<std::endl;
+    std::cout<<"generateHandledImage..."<<std::endl;
     cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
     for (int i = 0; i < image.rows; i++) {
         auto *p = image.ptr<cv::Vec3b>(i);

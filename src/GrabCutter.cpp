@@ -25,7 +25,7 @@ GrabCutter::~GrabCutter() {
     delete (graph);
 }
 
-void GrabCutter::start(std::string path) {
+void GrabCutter::start(const std::string& path) {
     //更改cout输出目的地
     OutputSwitcher outputSwitcher;
     outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
@@ -38,9 +38,7 @@ void GrabCutter::start(std::string path) {
 
     initGrabCut();
 
-    ImageOutputer::generateTenColorImage(imageMat, "Ten Color Result");
-    ImageOutputer::generateHandledImage(imageMat);
-    cv::waitKey(0);
+    advanceGrabCut();
 }
 
 void GrabCutter::initGrabCut() {
@@ -73,6 +71,14 @@ void GrabCutter::initGrabCut() {
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     cout << "===== GMM TOTAL DURATION: " << elapsed << "ms =====" << endl;
+
+    ImageOutputer::generateTenColorImage(imageMat, "Ten Color Result");
+    ImageOutputer::generateHandledImage(imageMat);
+}
+
+void GrabCutter::advanceGrabCut() {
+
+    uiController.additionalDrawImage();
 }
 
 
@@ -318,6 +324,8 @@ double GrabCutter::getVofPixels(Pixel &p1, Pixel &p2) {
     v *= 50; //gamma（γ）
     return v;
 }
+
+
 
 
 

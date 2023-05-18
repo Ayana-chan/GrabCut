@@ -16,16 +16,20 @@ class UIController {
 public:
     std::string imageName;
     cv::Mat srcImage;
-    cv::Mat drawnImage;
 
+    cv::Mat rectedImage;//画了矩形的图
+    cv::Mat drawnImage;//用户交互涂鸦的图
+
+    //用户绘制的矩形
+    cv::Rect rect;
     //矩形的对角坐标
     //x是横坐标！
-    int tempPosX1;
-    int tempPosY1;
     int posX1;
     int posY1;
     int posX2;
     int posY2;
+
+    std::string getImagesFromPath(const std::string &path);
 
     /**
      * 将自己所存储的图片解析成二维Pixel数组
@@ -33,15 +37,33 @@ public:
      */
     void analyseImage(std::vector<std::vector<Pixel>> &aimVec);
 
-    std::string getImagesFromPath(const std::string &path);
-
+    /**
+     * 要求用户在图上绘制矩形
+     * 会发生阻塞
+     * @param srcImageName
+     */
     void drawRect(const std::string &srcImageName);
 
-private:
-    static void mouseHandler(int event, int x, int y, int, void *);//x为横坐标
+    /**
+     * 要求用户进一步指定前景背景
+     * 会发生阻塞
+     */
+    void additionalDrawImage();
 
-    //是否在拖动创建矩形
+private:
+    //暂时存放矩形的第一个点，使得出现非法操作时可以回滚
+    int tempPosX1;
+    int tempPosY1;
+
+    //鼠标是否在拖动状态（画矩形）
     bool isDragging;
+
+    //鼠标左键或右键是否在拖动状态
+    bool isDraggingLeft;
+    bool isDraggingRight;
+
+    static void rectMouseHandler(int event, int x, int y, int, void *);//x为横坐标
+    static void advanceMouseHandler(int event, int x, int y, int, void *);//x为横坐标
 };
 
 

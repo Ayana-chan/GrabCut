@@ -19,7 +19,7 @@ class GrabCutter {
 public:
     GrabCutter();
 
-    void start(std::string path);
+    void start(const std::string& path);
 
     ~GrabCutter();
 
@@ -36,6 +36,11 @@ private:
      * 通过画矩阵来进行初始训练
      */
     void initGrabCut();
+
+    /**
+     * 进一步的用户交互指定前景背景
+     */
+    void advanceGrabCut();
 
     /**
      * 把矩形以外的所有点变成B_MUST。注：默认为F_PROB
