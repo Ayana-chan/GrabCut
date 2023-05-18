@@ -35,11 +35,15 @@ void UIController::analyseImage(std::vector<std::vector<Pixel>> &aimVec) {
 void UIController::drawRect(const std::string &srcImageName) {
 
     //初始化矩形为整个图像
-    this->posX1 = 0;
-    this->posY1 = 0;
-    this->posX2 = this->srcImage.cols - 1;
-    this->posY2 = this->srcImage.rows - 1;
-    this->isDragging = false;
+    posX1 = 0;
+    posY1 = 0;
+    posX2 = srcImage.cols - 1;
+    posY2 = srcImage.rows - 1;
+    rect.x = posX1;
+    rect.y = posY1;
+    rect.width = posX2 - posX1;
+    rect.height = posY2 - posY1;
+    isDragging = false;
 
     cv::namedWindow(srcImageName);
     cv::setMouseCallback(srcImageName, rectMouseHandler, this); //把当前对象也给传过去
@@ -48,7 +52,7 @@ void UIController::drawRect(const std::string &srcImageName) {
     //阻塞直到按下回车
     while (true) {
         int key = cv::waitKey() & 0xFF;
-        if (key == 13 && !this->isDragging) {
+        if (key == 13 && !isDragging) {
             //按下回车
             break;
         }
@@ -58,9 +62,8 @@ void UIController::drawRect(const std::string &srcImageName) {
 }
 
 void UIController::additionalDrawImage() {
-    std::cout << "hello1" << std::endl;
+
     drawnImage = srcImage(rect);
-    std::cout << "hello2" << std::endl;
     auto windowName = "Advance";
     cv::namedWindow(windowName);
     cv::setMouseCallback(windowName, advanceMouseHandler, this); //把当前对象也给传过去
@@ -143,23 +146,32 @@ void UIController::advanceMouseHandler(int event, int x, int y, int, void *srcUI
 
     auto *uiCon = (UIController *) srcUIController;
 
+    auto leftColor=cv::Scalar(255, 255, 255);
+    auto rightColor=cv::Scalar(0, 255, 0);
+
+    int radius=1;
+
     //左右要互斥
     if (event == cv::EVENT_LBUTTONDOWN && !uiCon->isDraggingLeft && !uiCon->isDraggingRight) {
         //开始拖动
         std::cout << "Advance: Begin Dragging Left  " << x << " " << y << std::endl;
         uiCon->isDraggingLeft = true;
+        cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, leftColor, -1);
     } else if (event == cv::EVENT_RBUTTONDOWN && !uiCon->isDraggingLeft && !uiCon->isDraggingRight) {
+        //开始拖动
         std::cout << "Advance: Begin Dragging Right " << x << " " << y << std::endl;
         uiCon->isDraggingRight = true;
+        cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, rightColor, -1);
     } else if (event == cv::EVENT_MOUSEMOVE) {
-        //正在拖动
         if (uiCon->isDraggingLeft) {
-            std::cout << "Advance: Move  Dragging Left  " << x << " " << y << std::endl;
-            cv::circle(uiCon->drawnImage, cv::Point(x, y), 1, cv::Scalar(255, 255, 255), -1);
+            //正在拖动
+//            std::cout << "Advance: Move  Dragging Left  " << x << " " << y << std::endl;
+            cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, leftColor, -1);
 
         } else if (uiCon->isDraggingRight) {
-            cv::circle(uiCon->drawnImage, cv::Point(x, y), 1, cv::Scalar(0, 255, 0), -1);
-            std::cout << "Advance: Move  Dragging Right " << x << " " << y << std::endl;
+            //正在拖动
+            cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, rightColor, -1);
+//            std::cout << "Advance: Move  Dragging Right " << x << " " << y << std::endl;
         }
     } else if (event == cv::EVENT_LBUTTONUP) {
         //结束拖动
