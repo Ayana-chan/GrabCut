@@ -40,7 +40,7 @@ void GrabCutter::start(const std::string &path) {
 
     advanceGrabCut();
 
-    cv::waitKey(0);
+
 }
 
 void GrabCutter::modifyAlphaByUser(int x, int y, int aimAlpha) {
@@ -98,12 +98,27 @@ void GrabCutter::advanceGrabCut() {
 
     cout << "--------------- advanceGrabCut ---------------" << endl;
 
-    uiController.additionalDrawImage();
+    bool isExit=false;
+    while(!isExit) {
 
-    startGMM(1);
+        uiController.additionalDrawImage();
 
-    ImageOutputer::generateTenColorImage(imageMat);
-    ImageOutputer::generateHandledImage(imageMat);
+        startGMM(1);
+
+        ImageOutputer::generateTenColorImage(imageMat);
+        ImageOutputer::generateHandledImage(imageMat);
+
+        while (true) {
+            int key = cv::waitKey() & 0xFF;
+            if (key == 13) {
+                //按下回车
+                break;
+            }else if(key == 'x'){
+                isExit=true;
+                break;
+            }
+        }
+    }
 }
 
 
