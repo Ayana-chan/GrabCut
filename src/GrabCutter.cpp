@@ -36,6 +36,14 @@ void GrabCutter::start(std::string path) {
     uiController.analyseImage(imageMat);
     cout << "Image Size: " << imageMat.size() << "*" << imageMat[0].size() << endl;
 
+    initGrabCut();
+
+    ImageOutputer::generateTenColorImage(imageMat, "Ten Color Result");
+    ImageOutputer::generateHandledImage(imageMat);
+    cv::waitKey(0);
+}
+
+void GrabCutter::initGrabCut() {
     //矩形输入与初始化
 
     std::cout << std::endl;
@@ -65,10 +73,8 @@ void GrabCutter::start(std::string path) {
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     cout << "===== GMM TOTAL DURATION: " << elapsed << "ms =====" << endl;
-
-    ImageOutputer::generateTenColorImage(imageMat);
-    ImageOutputer::generateHandledImage(imageMat);
 }
+
 
 void GrabCutter::updateMatByRect(int minX, int minY, int maxX, int maxY) {
     for (int i = 0; i < imageMat.size(); i++) {
@@ -156,7 +162,7 @@ void GrabCutter::startGMM(int itTimes) {
     if (itTimes <= 0) {
         itTimes = -1;
     }
-
+//TODO 迭代收敛判断
     while (itTimes != 0) {
         if (itTimes > 0) {
             --itTimes;
@@ -234,6 +240,7 @@ void GrabCutter::startGMM(int itTimes) {
 
 //        ImageOutputer::generateTenColorImage(imageMat);
 //        ImageOutputer::generateHandledImage(imageMat);
+//        cv::waitKey(0);
     }
 }
 
@@ -311,6 +318,8 @@ double GrabCutter::getVofPixels(Pixel &p1, Pixel &p2) {
     v *= 50; //gamma（γ）
     return v;
 }
+
+
 
 
 

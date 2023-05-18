@@ -4,7 +4,7 @@
 
 #include "util/ImageOutputer.h"
 
-cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage) {
+cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage,const std::string& name) {
 
     std::cout<<"generateTenColorImage..."<<std::endl;
     cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
@@ -71,13 +71,12 @@ cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage) {
             }
         }
     }
-    imshow("Output Image", image);
-    cv::waitKey(0);
+    imshow(name, image);
 
     return image;
 }
 
-cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage) {
+cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage,const std::string& name) {
 
     std::cout<<"generateTenColorImage..."<<std::endl;
     cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
@@ -96,8 +95,7 @@ cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage) {
             }
         }
     }
-    imshow("Output Image", image);
-    cv::waitKey(0);
+    imshow(name, image);
 
     return image;
 }

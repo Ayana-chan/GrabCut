@@ -33,6 +33,11 @@ private:
     GraphType* graph;
 
     /**
+     * 通过画矩阵来进行初始训练
+     */
+    void initGrabCut();
+
+    /**
      * 把矩形以外的所有点变成B_MUST。注：默认为F_PROB
      * @param minX
      * @param minY
@@ -62,6 +67,12 @@ private:
      */
     void generateGraph();
 
+    /**
+     * 计算两个像素之间的V
+     * @param p1
+     * @param p2
+     * @return
+     */
     double getVofPixels(Pixel &p1,Pixel &p2);
 };
 
