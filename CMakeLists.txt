@@ -7,9 +7,4 @@ add_executable(GrabCut main.cpp)
 target_link_libraries(GrabCut GrabCutter)
 add_subdirectory(src)
 
-
-
-
-
-
 add_executable(tempTest tempTest.cpp)

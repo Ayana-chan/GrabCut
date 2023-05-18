@@ -17,7 +17,16 @@ typedef Graph<double, double, double> GraphType;
 
 class GrabCutter {
 public:
+    /**
+     * 默认不输出图像
+     */
     GrabCutter();
+
+    /**
+     * 指定输出路径的构造函数，会生成图像输出
+     * @param imageOutPutPath
+     */
+    explicit GrabCutter(const std::string &imageOutPutPath);
 
     /**
      * 对外接口

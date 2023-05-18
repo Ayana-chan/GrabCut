@@ -52,8 +52,9 @@ public:
     /**
      * 要求用户进一步指定前景背景
      * 会发生阻塞
+     * @return 为真时表示用户要继续，否则要退出
      */
-    void additionalDrawImage();
+    bool additionalDrawImage();
 
 private:
     //暂时存放矩形的第一个点，使得出现非法操作时可以回滚

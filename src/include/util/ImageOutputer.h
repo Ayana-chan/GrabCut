@@ -11,6 +11,8 @@
 
 class ImageOutputer {
 public:
+    static std::string imageOutPutPath;
+
     static cv::Mat generateTenColorImage(ImageMat &analysedImage,const std::string& name="Ten Color Image");
     static cv::Mat generateHandledImage(ImageMat &analysedImage,const std::string& name="Handled Result");
 };

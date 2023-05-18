@@ -2,7 +2,8 @@
 // Created by DeathWind on 2023/5/14.
 //
 
-#include <GrabCutter.h>
+#include "ui/UIController.h"
+#include "GrabCutter.h"
 
 UIController::UIController(GrabCutter *grabCutter) {
     this->master = grabCutter;
@@ -64,7 +65,7 @@ void UIController::drawRect(const std::string &srcImageName) {
               << ")" << std::endl;
 }
 
-void UIController::additionalDrawImage() {
+bool UIController::additionalDrawImage() {
 
     drawnImage = srcImage(rect);
     auto windowName = "Advance";
@@ -77,7 +78,9 @@ void UIController::additionalDrawImage() {
         int key = cv::waitKey() & 0xFF;
         if (key == 13 && !this->isDragging) {
             //按下回车
-            break;
+            return true;
+        }else if(key == 'x'){
+            return false;
         }
     }
 }

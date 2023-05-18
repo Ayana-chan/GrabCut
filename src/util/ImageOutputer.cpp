@@ -4,9 +4,11 @@
 
 #include "util/ImageOutputer.h"
 
-cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage,const std::string& name) {
+std::string ImageOutputer::imageOutPutPath;
 
-    std::cout<<"generateTenColorImage..."<<std::endl;
+cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage, const std::string &name) {
+
+    std::cout << "generateTenColorImage..." << std::endl;
     cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
     for (int i = 0; i < image.rows; i++) {
         auto *p = image.ptr<cv::Vec3b>(i);
@@ -71,14 +73,17 @@ cv::Mat ImageOutputer::generateTenColorImage(ImageMat &analysedImage,const std::
             }
         }
     }
+    if (!imageOutPutPath.empty()) {
+        cv::imwrite(ImageOutputer::imageOutPutPath + name + ".png", image);
+    }
     imshow(name, image);
 
     return image;
 }
 
-cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage,const std::string& name) {
+cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage, const std::string &name) {
 
-    std::cout<<"generateHandledImage..."<<std::endl;
+    std::cout << "generateHandledImage..." << std::endl;
     cv::Mat image(analysedImage.size(), analysedImage[0].size(), CV_8UC3);
     for (int i = 0; i < image.rows; i++) {
         auto *p = image.ptr<cv::Vec3b>(i);
@@ -95,7 +100,12 @@ cv::Mat ImageOutputer::generateHandledImage(ImageMat &analysedImage,const std::s
             }
         }
     }
+    if (!imageOutPutPath.empty()) {
+        cv::imwrite(ImageOutputer::imageOutPutPath + name + ".png", image);
+    }
     imshow(name, image);
 
     return image;
 }
+
+

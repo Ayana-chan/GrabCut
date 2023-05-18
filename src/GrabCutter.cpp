@@ -21,6 +21,10 @@ GrabCutter::GrabCutter() : uiController(this), bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_
     graph = nullptr;
 }
 
+GrabCutter::GrabCutter(const std::string &imageOutPutPath) :GrabCutter(){
+    ImageOutputer::imageOutPutPath=imageOutPutPath;
+}
+
 GrabCutter::~GrabCutter() {
     delete (graph);
 }
@@ -98,26 +102,18 @@ void GrabCutter::advanceGrabCut() {
 
     cout << "--------------- advanceGrabCut ---------------" << endl;
 
-    bool isExit=false;
-    while(!isExit) {
+    while(true) {
 
-        uiController.additionalDrawImage();
+        bool isContinue = uiController.additionalDrawImage();
+        if(!isContinue){
+            cout<<"Exit advanceGrabCut"<<endl;
+            break;
+        }
 
         startGMM(1);
 
         ImageOutputer::generateTenColorImage(imageMat);
         ImageOutputer::generateHandledImage(imageMat);
-
-        while (true) {
-            int key = cv::waitKey() & 0xFF;
-            if (key == 13) {
-                //按下回车
-                break;
-            }else if(key == 'x'){
-                isExit=true;
-                break;
-            }
-        }
     }
 }
 
@@ -364,6 +360,8 @@ double GrabCutter::getVofPixels(Pixel &p1, Pixel &p2) {
     v *= 50; //gamma（γ）
     return v;
 }
+
+
 
 
 
