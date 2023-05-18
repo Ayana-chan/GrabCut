@@ -41,7 +41,7 @@ void GMM::train() {
 
     int sum = 0;//记录总样本数
     for (auto &component:componentList) {
-        sum += component.getSampleSize();//TODO 有问题
+        sum += component.getSampleSize();
     }
 
     for (auto &component:componentList) {

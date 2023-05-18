@@ -13,19 +13,19 @@ int main()
     g -> add_node();
     g -> add_node();
 
-    g -> add_tweights( 0,   /* capacities */  1, 5 );
-    g -> add_tweights( 1,   /* capacities */  2, 6 );
-    g -> add_edge( 0, 1,    /* capacities */  3, 4 );
+    g -> add_tweights( 0,   /* capacities */  0, 450 );
+    g -> add_tweights( 1,   /* capacities */  450, 0 );
+    g -> add_edge( 0, 1,    /* capacities */  30, 30 );
 
     int flow = g -> maxflow();
 
     printf("Flow = %d\n", flow);
     printf("Minimum cut:\n");
-    if (g->what_segment(0) == GraphType::SOURCE)
+    if (g->what_segment(0) , GraphType::SOURCE)
         printf("node0 is in the SOURCE set\n");
     else
         printf("node0 is in the SINK set\n");
-    if (g->what_segment(1) == GraphType::SOURCE)
+    if (g->what_segment(1) , GraphType::SOURCE)
         printf("node1 is in the SOURCE set\n");
     else
         printf("node1 is in the SINK set\n");

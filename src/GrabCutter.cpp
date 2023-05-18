@@ -12,15 +12,17 @@
 #define KMEANS_IT_TIMES 15
 //β的最小值，小于此值视作0
 #define MINIMUM_BETA 0.00001
+//GMM迭代次数
+#define GMM_IT_TIMES 3
 
 using namespace std;
 
 GrabCutter::GrabCutter() : bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {
-    graph= nullptr;
+    graph = nullptr;
 }
 
 GrabCutter::~GrabCutter() {
-    delete(graph);
+    delete (graph);
 }
 
 void GrabCutter::start(std::string path) {
@@ -47,18 +49,18 @@ void GrabCutter::start(std::string path) {
     //计算时间
     auto end = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    cout << "===== GMM INIT DURATION: " << elapsed <<"ms =====" << endl;
+    cout << "===== GMM INIT DURATION: " << elapsed << "ms =====" << endl;
     //ImageOutputer::generateTenColorImage(imageMat);
 
     //迭代训练
 
     calculateBeta();
-    startGMM(2);
+    startGMM(GMM_IT_TIMES);
 
     //计算时间
     end = std::chrono::system_clock::now();
     elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    cout << "===== GMM TOTAL DURATION: " << elapsed <<"ms =====" << endl;
+    cout << "===== GMM TOTAL DURATION: " << elapsed << "ms =====" << endl;
 
     ImageOutputer::generateTenColorImage(imageMat);
     ImageOutputer::generateHandledImage(imageMat);
@@ -180,39 +182,43 @@ void GrabCutter::startGMM(int itTimes) {
 
         auto end = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        cout << "===== GMM BEFORE TRAIN DURATION: " << elapsed <<"ms" <<" =====" << endl;
+        cout << "===== GMM BEFORE TRAIN DURATION: " << elapsed << "ms" << " =====" << endl;
 
         //step3:切割重整
         generateGraph();
 
         end = std::chrono::system_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        cout << "===== GMM GenerateGraph TRAIN DURATION: " << elapsed <<"ms" <<" =====" << endl;
+        cout << "===== GMM GenerateGraph TRAIN DURATION: " << elapsed << "ms" << " =====" << endl;
 
-        cout<<"--- Maxflow ... ---"<<endl;
-        double energy=graph->maxflow();
-        cout<<"=== Max Flow Energy: "<<energy<<" ==="<<endl;
+        cout << "--- Maxflow ... ---" << endl;
+        double energy = graph->maxflow();
+        cout << "=== Max Flow Energy: " << energy << " ===" << endl;
 
         end = std::chrono::system_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        cout << "===== GMM MAXFLOW DURATION: " << elapsed <<"ms" <<" =====" << endl;
+        cout << "===== GMM MAXFLOW DURATION: " << elapsed << "ms" << " =====" << endl;
 
         //修改前景背景
-        for(int i=0;i<imageMat.size();i++){
-            for(int j=0;j<imageMat[0].size();j++){
+        for (int i = 0; i < imageMat.size(); i++) {
+            for (int j = 0; j < imageMat[0].size(); j++) {
                 //用户指定的不能改
-                if(imageMat[i][j].alpha==PixelBelongEnum::B_MUST || imageMat[i][j].alpha==PixelBelongEnum::F_MUST){
+                if (imageMat[i][j].alpha == PixelBelongEnum::B_MUST ||
+                    imageMat[i][j].alpha == PixelBelongEnum::F_MUST) {
                     continue;
                 }
 
-                int currIndex=i*imageMat[0].size()+j;
-                if(graph->what_segment(currIndex,GraphType::SOURCE)){
+                int currIndex = i * imageMat[0].size() + j;
+                if (graph->what_segment(currIndex) == GraphType::SOURCE) {
                     //前景
-                    imageMat[i][j].alpha=PixelBelongEnum::F_PROB;
-                }else{
+                    imageMat[i][j].alpha = PixelBelongEnum::F_PROB;
+                } else {
                     //背景
-                    imageMat[i][j].alpha=PixelBelongEnum::B_PROB;
+                    imageMat[i][j].alpha = PixelBelongEnum::B_PROB;
                 }
+//                if (i == j) {
+//                    cout << imageMat[i][j] << endl;
+//                }
             }
         }
 
@@ -223,7 +229,7 @@ void GrabCutter::startGMM(int itTimes) {
 
 void GrabCutter::generateGraph() {
 
-    cout<<"--- Generate Graph ... ---"<<endl;
+    cout << "--- Generate Graph ... ---" << endl;
 
     int rows = imageMat.size();
     int cols = imageMat[0].size();
@@ -232,53 +238,67 @@ void GrabCutter::generateGraph() {
     int edgeNum = 4 * rows * cols - (3 * cols + 3 * rows - 2); //n-link
     edgeNum += 2 * nodeNum; //t-link
 
-    delete(graph);
-    graph= new GraphType(nodeNum, edgeNum);
+    delete (graph);
+    graph = new GraphType(nodeNum, edgeNum);
 
     //U
     for (int i = 0; i < imageMat.size(); i++) {
         for (int j = 0; j < imageMat[0].size(); j++) {
             auto &pixel = imageMat[i][j];
             int index = graph->add_node();
-            //source前景，sink背景 TODO 确定的像素点可能不需要去跑模型
-            graph->add_tweights(index, frGMM.getMinProbability(pixel), bkGMM.getMinProbability(pixel));
+            if (pixel.alpha == PixelBelongEnum::B_MUST) {
+                graph->add_tweights(index, 0, 450);//TODO 搞明白为什么要9*50
+            } else if (pixel.alpha == PixelBelongEnum::F_MUST) {
+                graph->add_tweights(index, 450, 0);
+            } else {
+                //source前景，sink背景
+                graph->add_tweights(index, bkGMM.getMinProbability(pixel), frGMM.getMinProbability(pixel));
+//                if (i == j) {
+//                    cout << "*** add_tweights: " << i << " " << j << " source: " << bkGMM.getMinProbability(pixel)
+//                         << " sink: "
+//                         << frGMM.getMinProbability(pixel) << endl;
+//                }
+            }
         }
     }
 
     //V
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            int currIndex=i*cols+j;
+            int currIndex = i * cols + j;
             //right-up
             if (i > 0 && j < cols - 1) {
-                double vv= getVofPixels(imageMat[i][j],imageMat[i-1][j+1]);
-                graph->add_edge(currIndex,currIndex-cols+1,vv,vv);//双向边，但最小割只会切一条
+                double vv = getVofPixels(imageMat[i][j], imageMat[i - 1][j + 1]);
+                graph->add_edge(currIndex, currIndex - cols + 1, vv, vv);//双向边，但最小割只会切一条
             }
             //right
             if (j < cols - 1) {
-                double vv=getVofPixels(imageMat[i][j],imageMat[i][j+1]);
-                graph->add_edge(currIndex,currIndex+1,vv,vv);//双向边，但最小割只会切一条
+                double vv = getVofPixels(imageMat[i][j], imageMat[i][j + 1]);
+                graph->add_edge(currIndex, currIndex + 1, vv, vv);//双向边，但最小割只会切一条
+//                if(i==j){
+//                    cout<<"*** V: "<<vv<<" ***"<<endl;
+//                }
             }
             //right-down
             if (i < rows - 1 && j < cols - 1) {
-                double vv=getVofPixels(imageMat[i][j],imageMat[i+1][j+1]);
-                graph->add_edge(currIndex,currIndex+cols+1,vv,vv);//双向边，但最小割只会切一条
+                double vv = getVofPixels(imageMat[i][j], imageMat[i + 1][j + 1]);
+                graph->add_edge(currIndex, currIndex + cols + 1, vv, vv);//双向边，但最小割只会切一条
             }
             //down
             if (i < rows - 1) {
-                double vv=getVofPixels(imageMat[i][j],imageMat[i+1][j]);
-                graph->add_edge(currIndex,currIndex+cols,vv,vv);//双向边，但最小割只会切一条
+                double vv = getVofPixels(imageMat[i][j], imageMat[i + 1][j]);
+                graph->add_edge(currIndex, currIndex + cols, vv, vv);//双向边，但最小割只会切一条
             }
         }
     }
 
 }
 
-double GrabCutter::getVofPixels(Pixel &p1,Pixel &p2) {
-    double v=p1.rgb.calDistanceTo(p2.rgb);
-    v*=-beta;
-    v=exp(v);
-    v*=50; //gamma（γ）
+double GrabCutter::getVofPixels(Pixel &p1, Pixel &p2) {
+    double v = p1.rgb.calDistanceTo(p2.rgb);
+    v *= -beta;
+    v = exp(v);
+    v *= 50; //gamma（γ）
     return v;
 }
 
