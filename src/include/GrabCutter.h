@@ -19,7 +19,20 @@ class GrabCutter {
 public:
     GrabCutter();
 
+    /**
+     * 对外接口
+     * @param path 图片的全路径
+     */
     void start(const std::string& path);
+
+    /**
+     * uiController在涂鸦时调用此方法进行对图像alpha的更新，
+     * 让其为B_MUST和F_MUST
+     * @param x 横坐标
+     * @param y
+     * @param aimAlpha 0表示背景，1表示前景
+     */
+    void modifyAlphaByUser(int x,int y,int aimAlpha);
 
     ~GrabCutter();
 

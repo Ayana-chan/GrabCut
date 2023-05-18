@@ -17,7 +17,7 @@
 
 using namespace std;
 
-GrabCutter::GrabCutter() : bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {
+GrabCutter::GrabCutter() : uiController(this), bkGMM(GMM(GMM_K)), frGMM(GMM(GMM_K)) {
     graph = nullptr;
 }
 
@@ -25,7 +25,7 @@ GrabCutter::~GrabCutter() {
     delete (graph);
 }
 
-void GrabCutter::start(const std::string& path) {
+void GrabCutter::start(const std::string &path) {
     //更改cout输出目的地
     OutputSwitcher outputSwitcher;
     outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
@@ -39,9 +39,27 @@ void GrabCutter::start(const std::string& path) {
     initGrabCut();
 
     advanceGrabCut();
+
+    cv::waitKey(0);
+}
+
+void GrabCutter::modifyAlphaByUser(int x, int y, int aimAlpha) {
+//    cout<<"modifyAlphaByUser: "<<x<<" "<<y<<" "<<aimAlpha;
+    PixelBelongEnum newAlpha;
+    if (aimAlpha == 0) {
+        newAlpha = PixelBelongEnum::B_MUST;
+    } else {
+        newAlpha = PixelBelongEnum::F_MUST;
+    }
+    auto baseX=uiController.rect.x;
+    auto baseY=uiController.rect.y;
+    imageMat[baseY+y][baseX+x].alpha = newAlpha;
 }
 
 void GrabCutter::initGrabCut() {
+
+    cout << "--------------- initGrabCut ---------------" << endl;
+
     //矩形输入与初始化
 
     std::cout << std::endl;
@@ -72,13 +90,20 @@ void GrabCutter::initGrabCut() {
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     cout << "===== GMM TOTAL DURATION: " << elapsed << "ms =====" << endl;
 
-    ImageOutputer::generateTenColorImage(imageMat, "Ten Color Result");
+    ImageOutputer::generateTenColorImage(imageMat);
     ImageOutputer::generateHandledImage(imageMat);
 }
 
 void GrabCutter::advanceGrabCut() {
 
+    cout << "--------------- advanceGrabCut ---------------" << endl;
+
     uiController.additionalDrawImage();
+
+    startGMM(1);
+
+    ImageOutputer::generateTenColorImage(imageMat);
+    ImageOutputer::generateHandledImage(imageMat);
 }
 
 
@@ -324,6 +349,8 @@ double GrabCutter::getVofPixels(Pixel &p1, Pixel &p2) {
     v *= 50; //gamma（γ）
     return v;
 }
+
+
 
 
 

@@ -2,8 +2,11 @@
 // Created by DeathWind on 2023/5/14.
 //
 
-#include "ui/UIController.h"
+#include <GrabCutter.h>
 
+UIController::UIController(GrabCutter *grabCutter) {
+    this->master = grabCutter;
+}
 
 std::string UIController::getImagesFromPath(const std::string &path) {
     int pos = path.find_last_of('\\');
@@ -137,7 +140,7 @@ void UIController::rectMouseHandler(int event, int x, int y, int, void *srcUICon
         uiCon->rect.width = uiCon->posX2 - uiCon->posX1;
         uiCon->rect.height = uiCon->posY2 - uiCon->posY1;
         cv::rectangle(uiCon->rectedImage, uiCon->rect, cv::Scalar(0, 0, 255), 2, 8, 0);
-        cv::imshow(uiCon->imageName, uiCon->rectedImage);
+        cv::imshow(uiCon->imageName, uiCon->rectedImage); //TODO 更顺滑的绘画
     }
 }
 
@@ -146,46 +149,72 @@ void UIController::advanceMouseHandler(int event, int x, int y, int, void *srcUI
 
     auto *uiCon = (UIController *) srcUIController;
 
-    auto leftColor=cv::Scalar(255, 255, 255);
-    auto rightColor=cv::Scalar(0, 255, 0);
+    auto leftColor = cv::Scalar(255, 255, 255);
+    auto rightColor = cv::Scalar(0, 255, 0);
 
-    int radius=1;
+    int radius = 1;
 
     //左右要互斥
     if (event == cv::EVENT_LBUTTONDOWN && !uiCon->isDraggingLeft && !uiCon->isDraggingRight) {
         //开始拖动
-        std::cout << "Advance: Begin Dragging Left  " << x << " " << y << std::endl;
+//        std::cout << "Advance: Begin Dragging Left  " << x << " " << y << std::endl;
         uiCon->isDraggingLeft = true;
         cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, leftColor, -1);
     } else if (event == cv::EVENT_RBUTTONDOWN && !uiCon->isDraggingLeft && !uiCon->isDraggingRight) {
         //开始拖动
-        std::cout << "Advance: Begin Dragging Right " << x << " " << y << std::endl;
+//        std::cout << "Advance: Begin Dragging Right " << x << " " << y << std::endl;
         uiCon->isDraggingRight = true;
         cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, rightColor, -1);
     } else if (event == cv::EVENT_MOUSEMOVE) {
-        if (uiCon->isDraggingLeft) {
+        //绘制的时候，半径若为1，则会画出十字形，中上下左右五个点
+        if (uiCon->isDraggingLeft || uiCon->isDraggingRight) {
+            //左键为背景，右键为前景
+            int alphaFlag;//表示目标flag，0为背景1为前景
             //正在拖动
+            if (uiCon->isDraggingLeft) {
 //            std::cout << "Advance: Move  Dragging Left  " << x << " " << y << std::endl;
-            cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, leftColor, -1);
-
-        } else if (uiCon->isDraggingRight) {
-            //正在拖动
-            cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, rightColor, -1);
+                cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, leftColor, -1);
+                alphaFlag=0;
+            } else {
+                cv::circle(uiCon->drawnImage, cv::Point(x, y), radius, rightColor, -1);
 //            std::cout << "Advance: Move  Dragging Right " << x << " " << y << std::endl;
+                alphaFlag=1;
+            }
+            //修改alpha
+            int rows=uiCon->drawnImage.rows;
+            int cols=uiCon->drawnImage.cols;
+            //防止界外涂鸦
+            if(x>=0 && x<cols && y>=0 && y<rows){
+                uiCon->master->modifyAlphaByUser(x,y,alphaFlag);
+                if(x>0){
+                    uiCon->master->modifyAlphaByUser(x-1,y,alphaFlag);
+                }
+                if(x<cols-1){
+                    uiCon->master->modifyAlphaByUser(x+1,y,alphaFlag);
+                }
+                if(y>0){
+                    uiCon->master->modifyAlphaByUser(x,y-1,alphaFlag);
+                }
+                if(y<rows-1){
+                    uiCon->master->modifyAlphaByUser(x,y+1,alphaFlag);
+                }
+            }
         }
     } else if (event == cv::EVENT_LBUTTONUP) {
         //结束拖动
-        std::cout << "Advance: End   Dragging Left  " << x << " " << y << std::endl;
+//        std::cout << "Advance: End   Dragging Left  " << x << " " << y << std::endl;
         uiCon->isDraggingLeft = false;
     } else if (event == cv::EVENT_RBUTTONUP) {
         //结束拖动
-        std::cout << "Advance: End   Dragging Right " << x << " " << y << std::endl;
+//        std::cout << "Advance: End   Dragging Right " << x << " " << y << std::endl;
         uiCon->isDraggingRight = false;
     }
 
     //一直刷新
     cv::imshow("Advance", uiCon->drawnImage);
 }
+
+
 
 
 

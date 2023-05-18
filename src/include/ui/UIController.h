@@ -12,8 +12,11 @@
 
 #include "cut_alg/Pixel.h"
 
+class GrabCutter;
+
 class UIController {
 public:
+    GrabCutter* master; //回指所属的GrabCutter
     std::string imageName;
     cv::Mat srcImage;
 
@@ -28,6 +31,8 @@ public:
     int posY1;
     int posX2;
     int posY2;
+
+    UIController(GrabCutter* grabCutter);
 
     std::string getImagesFromPath(const std::string &path);
 
