@@ -95,6 +95,7 @@ void UIController::rectMouseHandler(int event, int x, int y, int, void *srcUICon
 //        std::cout << "Rect: End   Dragging " << x << " " << y << std::endl;
         uiCon->isDragging = false;
 
+        //防止越界（鼠标在图像外释放也会算）
         if (x > uiCon->srcImage.cols - 1) {
             x = uiCon->srcImage.cols - 1;
         }
