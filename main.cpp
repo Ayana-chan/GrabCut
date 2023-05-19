@@ -15,3 +15,25 @@ int main() {
 
     return 0;
 }
+
+//int main (int argc,char *argv[]){
+//    cout<<argc<<endl;
+//    for(int i=0;i<argc;i++){
+//        cout<<argv[i]<<endl;
+//    }
+//    if(argc!=2 && argc!=3){
+//        cout<<"Wrong number of parameters ("<<argc<<"). Should be 1 or 2."<<endl;
+//        return -1;
+//    }
+//
+//    cout << "--- START ---" << endl;
+//
+//    auto outputPath="./";
+//    if(argc==3){
+//        outputPath=argv[2];
+//    }
+//    auto grabCutter = make_unique<GrabCutter>(outputPath);
+//    grabCutter->start(argv[1]);
+//
+//    cout << "--- FINISH ---" << endl;
+//}

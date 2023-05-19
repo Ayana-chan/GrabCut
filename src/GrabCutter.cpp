@@ -32,7 +32,7 @@ GrabCutter::~GrabCutter() {
 void GrabCutter::start(const std::string &path) {
     //更改cout输出目的地
     OutputSwitcher outputSwitcher;
-    outputSwitcher.switchOutputToFile(R"(D:\Code\C\clionCpp\GrabCut\output\output.txt)");
+    outputSwitcher.switchOutputToFile(ImageOutputer::imageOutPutPath+"output.txt");
 
     //输入图像
 
