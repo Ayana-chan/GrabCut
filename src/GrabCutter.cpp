@@ -6,14 +6,17 @@
 #include "util/OutputSwitcher.h"
 #include "util/ImageOutputer.h"
 
+//GMM迭代次数
+#define GMM_IT_TIMES 3
 //GMM的component数量（K）
 #define GMM_K 5
 //kmeans的迭代次数
 #define KMEANS_IT_TIMES 3
+//确定为背景（前景）时，与t（s）相连的边的权值。不知多少合适，很大很小也不太影响效率
+#define MUST_VALUE 5000
 //β的最小值，小于此值视作0
 #define MINIMUM_BETA 0.00001
-//GMM迭代次数
-#define GMM_IT_TIMES 3
+
 
 using namespace std;
 
@@ -306,9 +309,9 @@ void GrabCutter::generateGraph() {
             auto &pixel = imageMat[i][j];
             int index = graph->add_node();
             if (pixel.alpha == PixelBelongEnum::B_MUST) {
-                graph->add_tweights(index, 0, 450);//TODO 搞明白为什么要9*50
+                graph->add_tweights(index, 0, MUST_VALUE);
             } else if (pixel.alpha == PixelBelongEnum::F_MUST) {
-                graph->add_tweights(index, 450, 0);
+                graph->add_tweights(index, MUST_VALUE, 0);
             } else {
                 //source前景，sink背景
                 graph->add_tweights(index, bkGMM.getMinProbability(pixel), frGMM.getMinProbability(pixel));

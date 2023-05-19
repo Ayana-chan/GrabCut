@@ -13,9 +13,9 @@ int main()
     g -> add_node();
     g -> add_node();
 
-    g -> add_tweights( 0,   /* capacities */  0, 450 );
-    g -> add_tweights( 1,   /* capacities */  450, 0 );
-    g -> add_edge( 0, 1,    /* capacities */  30, 30 );
+    g -> add_tweights( 0,   /* capacities */  2, 500 );
+    g -> add_tweights( 1,   /* capacities */  15, 16 );
+    g -> add_edge( 0, 1,    /* capacities */  1, 1 );
 
     int flow = g -> maxflow();
 
