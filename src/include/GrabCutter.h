@@ -54,6 +54,9 @@ private:
 
     GraphType* graph;
 
+    //记录上次的能量
+    double lastEnergy;
+
     /**
      * 通过画矩阵来进行初始训练
      */

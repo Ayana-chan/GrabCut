@@ -6,16 +6,18 @@
 #include "util/OutputSwitcher.h"
 #include "util/ImageOutputer.h"
 
-//GMM迭代次数
-#define GMM_IT_TIMES 3
+//GMM迭代次数（非正则视为无限迭代直至收敛）
+#define GMM_IT_TIMES 0
 //GMM的component数量（K）
 #define GMM_K 5
 //kmeans的迭代次数
-#define KMEANS_IT_TIMES 3
+#define KMEANS_IT_TIMES 10
 //确定为背景（前景）时，与t（s）相连的边的权值。不知多少合适，很大很小也不太影响效率
 #define MUST_VALUE 5000
-//β的最小值，小于此值视作0
-#define MINIMUM_BETA 0.00001
+//累计距离（用于计算β）的最小值，小于此值则补到此值（防止纯色）
+#define MINIMUM_TOTAL_DISTANCE 0.00001
+//能量减少的比例小于此值时，视为收敛
+#define CONVERGENCE_CHANGE_RATIO 0.03
 
 
 using namespace std;
@@ -186,8 +188,8 @@ void GrabCutter::calculateBeta() {
     }
 
     //纯色图的累计距离极小，可能导致溢出
-    if (totalDistance < MINIMUM_BETA) {
-        totalDistance = MINIMUM_BETA;
+    if (totalDistance < MINIMUM_TOTAL_DISTANCE) {
+        totalDistance = MINIMUM_TOTAL_DISTANCE;
     }
 
     double edgeNum = 4 * rows * cols;//总量
@@ -203,15 +205,9 @@ void GrabCutter::calculateBeta() {
 void GrabCutter::startGMM(int itTimes) {
     //当前正在进行的迭代次数
     int it = 0;
-    //不限制迭代次数，直到收敛
-    if (itTimes <= 0) {
-        itTimes = -1;
-    }
-//TODO 迭代收敛判断
-    while (itTimes != 0) {
-        if (itTimes > 0) {
-            --itTimes;
-        }
+
+    //itTimes不为正则无限迭代（直到收敛）
+    while (it<itTimes || itTimes<=0) {
         ++it;
         cout << endl << "------------ Start Train " << it << "------------" << endl << endl;
 
@@ -286,6 +282,24 @@ void GrabCutter::startGMM(int itTimes) {
 //        ImageOutputer::generateTenColorImage(imageMat);
 //        ImageOutputer::generateHandledImage(imageMat);
 //        cv::waitKey(0);
+
+        //迭代收敛判断（仅无限迭代时时）
+        if(itTimes<=0){
+            //第一次不算
+            if(it!=1){
+                double deltaEnergy=lastEnergy-energy;
+                double ratio=deltaEnergy/lastEnergy;
+                cout << "$$$ Max Flow Energy Decrease Ratio: " << ratio << " $$$" << endl;
+                if(ratio<=CONVERGENCE_CHANGE_RATIO){
+                    //收敛
+                    cout << "--- Convergence in: " << it << " times ---" << endl;
+                    return;
+                }
+            }
+            //不收敛
+            lastEnergy=energy;
+        }
+
     }
 }
 
