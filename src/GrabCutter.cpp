@@ -249,7 +249,7 @@ void GrabCutter::startGMM(int itTimes) {
         //计算生成图像时间
         auto end2 = std::chrono::system_clock::now();
         auto elapsed2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count();
-        cout << "  === GMM GenerateGraph TRAIN DURATION: " << elapsed2 << "ms" << " ===" << endl;
+        cout << "  === GMM GenerateGraph DURATION: " << elapsed2 << "ms" << " ===" << endl;
 
         cout << "--- Maxflow ... ---" << endl;
         double energy = graph->maxflow();
